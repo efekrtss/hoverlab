@@ -1,27 +1,28 @@
-# İtkiLab
+# HoverLab
 
 **Drone'unu tasarla, uçur, ölç, PID'ini ayarla.**
 
-**Canlı site:** https://efekrtss.github.io/itkilab/
+**Canlı site:** https://efekrtss.github.io/hoverlab/
 
-İtkiLab, tarayıcıda çalışan açık kaynak bir drone tasarım aracıdır. Bileşenleri seçersin; itki, akım, hover gazı ve uçuş süresi anında hesaplanır. Drone aynı fizikle 3B sahnede uçar. PID laboratuvarı tasarımına göre kazanç önerir ve ESP32 + MPU-6050 başlangıç kodu üretir.
+HoverLab, tarayıcıda çalışan açık kaynak bir drone tasarım aracıdır. Bileşenleri seçersin; itki, akım, hover gazı ve uçuş süresi anında hesaplanır. Drone aynı fizikle 3B sahnede uçar. PID laboratuvarı tasarımına göre kazanç önerir ve ESP32 + MPU-6050 başlangıç kodu üretir.
 
 Sunucu ya da veritabanı yoktur. Kök klasördeki `index.html` tek başına çalışan hazır sayfadır: çift tıklayıp açman yeterli.
 
 ## Özellikler
 
-- **Drone'unu oluştur:** 170 parçalık katalogda arama (motor, pervane, batarya, ESC/sürücü, kontrolcü, sensör, video, alıcı). Motor, pervane ya da batarya eklenince teknik değerler kendiliğinden dolar; ağırlıkları kendi ölçtüğün değerle değiştirebilirsin.
+- **Drone'unu oluştur:** yaklaşık 300 parçalık katalogda arama (motor, pervane, batarya, ESC/sürücü, kontrolcü, sensör, video, alıcı). Motor, pervane ya da batarya eklenince teknik değerler kendiliğinden dolar; ağırlıkları kendi ölçtüğün değerle değiştirebilirsin.
 - **Hesaplar:** itki/ağırlık oranı, hover gazı, hover uçuş süresi, gaz–itki–akım eğrisi, ESC ve batarya yük kontrolleri, gerilim düşümü, pervane ucu hızı.
 - **3B uçuş sahnesi:** gaz ve eğim kontrolü, takip ve gözlemci kamerası, itki okları, zayıf cihazlar için hafif mod. Model listendeki parçalara göre değişir (kamera, GPS, anten, batarya boyu).
 - **Arıza ve güvenlik senaryoları:** pervane kırma, güvenli iniş, eve dönüş, sinyal kaybı (yerinde in / eve dön / motorları kapat), düşük bataryada otomatik iniş ve paraşüt. Sonuç drone tipine göre değişir: kuad tek pervane kaybında düşer, heksa 1, okta 2 kaybı tolere eder.
-- **PID ayar laboratuvarı:** tek eksen (roll) simülasyonu; ağırlık merkezi kayması, rüzgâr darbesi, sensör gürültüsü ve gecikmesi dahil. Otomatik ayar ve ESP32 kod üretici.
+- **İki dil:** Türkçe ve İngilizce arayüz; sağ üstteki düğmeyle değişir, tarayıcı diline göre otomatik seçilir. Çeviriler `src/js/i18n.js` içinde.
+- **PID ayar laboratuvarı:** tek eksen (roll) simülasyonu; ağırlık merkezi kayması, rüzgâr darbesi, sensör gürültüsü ve gecikmesi dahil. Otomatik ayar, ESP32 kod üretici ve PID'i tarihçesinden ayar adımlarına kadar anlatan açılır panel ("PID nedir?").
 - **Kaydet ve paylaş:** tasarımlar tarayıcıda saklanır; bağlantı ya da metin olarak paylaşılır. Hiçbir veri sunucuya gitmez.
 
 ## Hızlı başlangıç
 
 ```bash
-git clone https://github.com/efekrtss/itkilab.git
-cd itkilab
+git clone https://github.com/efekrtss/hoverlab.git
+cd hoverlab
 # index.html'i tarayıcıda aç. Hepsi bu.
 # Geliştirirken src/index.html'i aç: kaynak dosyaları doğrudan yükler.
 ```
@@ -30,7 +31,7 @@ Testleri çalıştırmak ve tek dosyalık sürüm üretmek için Node.js 18+ ger
 
 ```bash
 npm test          # fizik modeli testleri
-npm run build     # src/ → index.html (yayın sayfası) ve dist/itkilab-offline.html (internetsiz)
+npm run build     # src/ → index.html (yayın sayfası) ve dist/hoverlab-offline.html (internetsiz)
 ```
 
 ## Yayına alma
@@ -58,7 +59,7 @@ src/js/app.js           Döngü, kayıt, paylaşım, başlatma
 vendor/                 three.js r128 (MIT)
 assets/                 Simge
 tests/                  node --test ile çalışan fizik testleri
-scripts/build.mjs       src/ → index.html ve dist/itkilab-offline.html
+scripts/build.mjs       src/ → index.html ve dist/hoverlab-offline.html
 ```
 
 Kaynaklar sırayla yüklenen klasik `<script>` dosyalarıdır; `src/index.html` da derleyici olmadan, `file://` üzerinden açılır. Bir şey değiştirdiğinde `npm run build` ile kök `index.html`'i yeniden üret; GitHub iş akışı bunun unutulmadığını kontrol eder.
@@ -92,4 +93,4 @@ Katkılar memnuniyetle karşılanır. En kolay başlangıç kataloğa doğrulanm
 
 ### English summary
 
-İtkiLab is an open-source, in-browser drone design tool: pick components from a searchable catalog, get thrust-to-weight, hover throttle, current and flight time instantly, fly the build in a 3D scene, and tune a single-axis PID loop that generates ESP32 + MPU-6050 starter code. No server or build step; open `index.html`. The UI is currently Turkish; translations are welcome.
+HoverLab is an open-source, in-browser drone design tool: pick components from a searchable catalog, get thrust-to-weight, hover throttle, current and flight time instantly, fly the build in a 3D scene, and tune a single-axis PID loop that generates ESP32 + MPU-6050 starter code. No server or build step; open `index.html`. The interface is available in Turkish and English (toggle at the top right); more translations are welcome.
