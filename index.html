@@ -5,23 +5,32 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>HoverLab</title>
-<meta name="description" content="HoverLab: açık kaynak drone itki hesaplayıcı, 3B uçuş simülatörü ve PID ayar laboratuvarı. Bileşen kataloğundan drone'unu oluştur; itki/ağırlık oranı, hover gazı, akım, uçuş süresi ve PID kazançlarını gör.">
-<meta name="theme-color" content="#F2F4F6" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0A1015" media="(prefers-color-scheme: dark)">
+<meta name="description" content="HoverLab: ücretsiz drone itki hesaplayıcı, 3B uçuş simülatörü ve PID ayar laboratuvarı. Bileşen kataloğundan drone'unu oluştur; itki/ağırlık oranı, hover gazı, akım, uçuş süresi ve PID kazançlarını gör.">
+<meta name="theme-color" content="#FFF6F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#150F17" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://efekrtss.github.io/hoverlab/">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="HoverLab">
+<meta property="og:url" content="https://efekrtss.github.io/hoverlab/">
+<meta property="og:image" content="https://efekrtss.github.io/hoverlab/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:title" content="HoverLab · Drone İtki Simülatörü">
 <meta property="og:description" content="Drone'unu tasarla, uçur, ölç, PID'ini ayarla.">
 <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PGcgc3Ryb2tlPSIjMEYxQTIyIiBzdHJva2Utd2lkdGg9IjIuNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48cGF0aCBkPSJNOS41IDkuNWwxMyAxM00yMi41IDkuNWwtMTMgMTMiLz48L2c+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRTg1OTBDIiBzdHJva2Utd2lkdGg9IjIuMiI+PGNpcmNsZSBjeD0iOCIgY3k9IjgiIHI9IjUiLz48Y2lyY2xlIGN4PSIyNCIgY3k9IjgiIHI9IjUiLz48Y2lyY2xlIGN4PSI4IiBjeT0iMjQiIHI9IjUiLz48Y2lyY2xlIGN4PSIyNCIgY3k9IjI0IiByPSI1Ii8+PC9nPjxyZWN0IHg9IjEyIiB5PSIxMiIgd2lkdGg9IjgiIGhlaWdodD0iOCIgcng9IjIiIGZpbGw9IiMwRjFBMjIiLz48L3N2Zz4K" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* HoverLab · stil dosyası · Lisans: MIT */
+/* HoverLab · stil dosyası · © 2026 HoverLab. Tüm hakları saklıdır. */
 /* Layout: üstte tam genişlik 3B uçuş sahnesi (vitrin), altında sonuç şeridi; sonra solda sekmeli yapılandırma, sağda grafik ve kontroller */
 /* Renk: kiraz kırmızısı ana vurgu, turkuaz ikincil, güneş sarısı küçük vurgular; nötrler hafif pembe tonlu.
    Yazı: Baloo 2 (yuvarlak, sıcak başlıklar) + Nunito (yumuşak gövde) + IBM Plex Mono (veriler). Hepsi Türkçe karakterleri destekler. */
 :root{
   --bg:#FFF6F7; --surface:#FFFFFF; --surface2:#FDECEF; --ink:#2B1B2A; --muted:#7B6574; --line:#F3D9DF;
-  --accent:#E63946; --accent-ink:#FFFFFF; --accent2:#11A39A; --sun:#FFB703; --good:#2B9348; --warn:#C27C0E; --bad:#A4161A;
+  --accent:#C8202F; --accent-ink:#FFFFFF; --accent2:#0B7A72; --sun:#FFB703; --good:#1E7034; --warn:#8F5D00; --bad:#A4161A;
   --glass:rgba(255,255,255,.78); --glass-line:rgba(230,57,70,.12); --shadow:0 1px 2px rgba(120,30,50,.05),0 10px 30px rgba(230,57,70,.08);
   --sky-top:#8EC5F2; --sky-hor:#FFEFF2; --ground:#CDE3C4;
   --r-sm:10px; --r-md:14px; --r-lg:22px;
@@ -345,24 +354,139 @@ footer.foot a:hover{text-decoration:underline}
 body.noscroll{overflow:hidden}
 @media (prefers-reduced-motion:reduce){.drawer,.drawer-back{transition:none}}
 :root[lang="tr"] .langbtn [data-l="tr"] .flag,:root[lang="en"] .langbtn [data-l="en"] .flag{box-shadow:0 0 0 1.5px rgba(255,255,255,.9)}
+
+/* v2.4: Uygunluk paneli */
+.compat-open{display:inline-flex;align-items:center;gap:6px}
+.compat-open svg,.compat-cta svg,.side-tab svg{width:16px;height:16px;flex:none}
+.compat-open .pill{font-size:11px;padding:1px 8px}
+.compat-badge:empty{display:none}
+.compat-cta{display:flex;align-items:center;gap:12px;width:100%;margin-top:12px;padding:12px 14px;border:1.5px dashed color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:14px;background:color-mix(in srgb,var(--accent) 6%,var(--surface));color:var(--ink);cursor:pointer;text-align:left;font:inherit}
+.compat-cta:hover{border-style:solid;background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
+.compat-cta svg{width:22px;height:22px;color:var(--accent)}
+.compat-cta span:nth-child(2){flex:1;min-width:0;display:flex;flex-direction:column}
+.compat-cta small{color:var(--muted);font-size:12.5px}
+.side-tab{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:40;display:none;flex-direction:column;align-items:center;gap:8px;padding:14px 8px;border:0;border-radius:12px 0 0 12px;background:var(--accent);color:var(--accent-ink);cursor:pointer;box-shadow:-4px 4px 18px rgba(230,57,70,.3);font:700 13px var(--f-display,inherit)}
+.side-tab span{writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.04em}
+.side-tab:hover{padding-right:12px}
+@media (min-width:1440px){.side-tab{display:flex}}
+.risk{display:flex;align-items:center;gap:18px;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:var(--surface2)}
+.gauge{width:128px;flex:none}
+.gauge path{fill:none;stroke-width:12;stroke-linecap:round}
+.g-bg{stroke:var(--line)}
+.g-fg{transition:stroke-dashoffset .5s ease}
+.g-fg.ok{stroke:var(--good)}.g-fg.wn{stroke:var(--warn)}.g-fg.bd{stroke:var(--bad)}
+.risk-lbl{font-family:var(--f-display);font-size:22px;font-weight:800;line-height:1.1}
+.risk-lbl.ok{color:var(--good)}.risk-lbl.wn{color:var(--warn)}.risk-lbl.bd{color:var(--bad)}
+.risk-num{font-family:var(--f-mono);font-size:13px;color:var(--muted);margin-top:2px}
+.risk-num b{color:var(--ink)}
+.risk p{margin:6px 0 0;font-size:14px}
+.ess{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:8px}
+.ess li{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;border:1px solid var(--line);font-size:14px;font-weight:600}
+.ess li span{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:13px;color:#fff;flex:none}
+.ess li.ok span{background:var(--good)}.ess li.bd span{background:var(--bad)}
+.ess li.bd{border-color:color-mix(in srgb,var(--bad) 45%,var(--line));background:color-mix(in srgb,var(--bad) 7%,transparent)}
+.drawer-body .checks{margin:0}
+.drawer-body .cnt{margin-left:auto;display:inline-flex;gap:4px}
+.drawer-body .cnt .pill{font-size:11px;padding:1px 8px}
+.checks .pair{display:block;font-style:normal;font-family:var(--f-mono);font-size:11.5px;color:var(--muted);letter-spacing:.02em}
+.checks .ic.i{color:var(--accent2);border-color:currentColor}
+.pre{padding-left:20px;margin:0}.pre li{margin:4px 0}
+.fine{font-size:12.5px;color:var(--muted);margin-top:18px}
+ul.checks .ic.ok{color:var(--good)} ul.checks .ic.wn{color:var(--warn)} ul.checks .ic.bd{color:var(--bad)} ul.checks .ic.i{color:var(--accent2)}
+.compat-open .compat-badge{font-size:0;gap:0;padding:0}
+.compat-open .compat-badge::before{width:8px;height:8px}
+@media (max-width:480px){.gauge{width:96px}.risk{gap:12px;padding:12px}.risk-lbl{font-size:19px}}
+
+
+/* v2.6: Akıllı tasarımcı + rapor */
+.dz-cta{display:flex;align-items:center;gap:12px;margin-top:12px;padding:12px 18px;border:0;border-radius:var(--r-md);background:linear-gradient(120deg,var(--accent),color-mix(in srgb,var(--accent) 70%,var(--sun)));color:var(--accent-ink);cursor:pointer;text-align:left;font:inherit;box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 30%,transparent);transition:transform .15s}
+.dz-cta:hover{transform:translateY(-1px)}
+.dz-cta svg{width:26px;height:26px;flex:none}
+.dz-cta span{display:flex;flex-direction:column}
+.dz-cta b{font-family:var(--f-display);font-size:17px}
+.dz-cta small{opacity:.9;font-size:13px}
+.dz-open{display:inline-flex;align-items:center;gap:6px;color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
+.dz-open svg,.rp svg{width:15px;height:15px;flex:none}
+.rp{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}
+.rp .btn{display:inline-flex;align-items:center;gap:6px}
+.dz-form{display:flex;flex-direction:column;gap:8px;margin:12px 0 4px}
+.dz-form .lbl{margin-top:6px}
+.dz-chips{display:flex;flex-wrap:wrap;gap:6px}
+.dz-chips button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font:inherit;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer}
+.dz-chips button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.dz-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.dz-row input{width:100%}
+.dz-go{align-self:flex-start;margin-top:10px;padding:10px 22px}
+.dz-prog{height:8px;border-radius:99px;background:var(--surface2);overflow:hidden;margin-top:16px}
+.dz-prog span{display:block;height:100%;width:3%;background:var(--accent);transition:width .2s}
+.dz-card{border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:14px;background:var(--surface)}
+.dz-card header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.dz-rank{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);font-weight:800;font-family:var(--f-display);flex:none}
+.dz-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.dz-kpi div{background:var(--surface2);border-radius:12px;padding:8px 10px;min-width:0}
+.dz-kpi b{display:block;font-family:var(--f-display);font-size:19px;line-height:1.1}
+.dz-kpi small{color:var(--muted);font-size:11.5px}
+.dz-parts{list-style:none;padding:0;margin:10px 0;font-size:14px}
+.dz-parts li{display:grid;grid-template-columns:72px minmax(0,1fr);gap:8px;padding:4px 0;border-bottom:1px dashed var(--line)}
+.dz-parts li span{color:var(--muted);font-size:12.5px}
+.dz-none{border:1.5px dashed var(--line);border-radius:14px;padding:14px;margin-top:14px}
+.dz-none p{margin:6px 0 0;color:var(--muted)}
+.dz-note{color:var(--warn);font-size:13.5px;margin:12px 0 0}
+@media (max-width:480px){.dz-kpi{grid-template-columns:repeat(2,1fr)}.dz-row{grid-template-columns:1fr}}
+
+/* v2.6: Karşılaştırma */
+.drawer.wide{width:min(860px,100%)}
+.cmp-tray{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:45;display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border:0;border-radius:999px;background:var(--ink);color:var(--bg);font:inherit;font-weight:700;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.cmp-tray svg,#cmpAddBtn svg{width:16px;height:16px}
+#cmpAddBtn{display:inline-flex;align-items:center;gap:6px}
+.cmp-top{margin-top:4px}
+.cmp-table{font-size:13.5px}
+.cmp-table th{text-align:left;font-weight:600;color:var(--muted);white-space:nowrap}
+.cmp-table tr:first-child th{color:var(--ink);font-family:var(--f-display);font-size:15px;font-weight:800;white-space:normal;vertical-align:bottom}
+.cmp-table td{text-align:left;white-space:normal}
+.cmp-table td.best{color:var(--good);font-weight:800}
+.cmp-table td.best::after{content:" ★";font-size:11px}
+.cmp-table tr.part td{font-size:12.5px;color:var(--muted)}
+.cmp-table tr.cmp-acts td{border-bottom:0;padding-top:10px}
+.cmp-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.cmp-verdict{background:var(--surface2);border-radius:12px;padding:10px 12px;margin-top:12px;font-size:14px}
+.cmp-chart{width:100%;height:240px;display:block}
+.dz-cmpall{margin-top:14px}
+.linkbtn{border:0;background:none;padding:0;color:var(--accent);font:inherit;font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.cmp-table td{font-family:var(--f-body);font-variant-numeric:tabular-nums}
+.cmp-table tr.cmp-acts td .btn{margin:2px 0}
+.cmp-table th:first-child{width:1%}
+@media (max-width:640px){.cmp-table{font-size:12.5px}.cmp-table th,.cmp-table td{padding:7px 6px}.cmp-table td{min-width:110px}}
+.cm-msg{min-height:1.2em;font-size:13.5px;color:var(--accent2);margin:8px 0 0}
+
+/* v2.7: erişilebilirlik */
+.sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skip{position:absolute;left:12px;top:-60px;z-index:100;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:700;text-decoration:none}
+.skip:focus{top:12px}
+.drawer-body:focus,.tablewrap:focus{outline:none}
+.drawer-body:focus-visible,.tablewrap:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 </style>
 <style>html,body{margin:0}</style>
 </head>
 <body>
+<noscript><p style="margin:0;padding:12px 16px;background:#C8202F;color:#fff;font:600 15px system-ui">HoverLab JavaScript gerektirir; lütfen tarayıcında JavaScript'i aç. / HoverLab needs JavaScript; please enable it in your browser.</p></noscript>
+<a class="skip" href="#tasarim">İçeriğe geç</a>
 <nav class="bar" aria-label="Ana gezinme"><div class="in">
   <a class="brand" href="#ust"><svg viewBox="0 0 32 32" aria-hidden="true"><g stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"><path d="M9.5 9.5l13 13M22.5 9.5l-13 13"/></g><g fill="none" stroke="var(--accent)" stroke-width="2.2"><circle cx="8" cy="8" r="5"/><circle cx="24" cy="8" r="5"/><circle cx="8" cy="24" r="5"/><circle cx="24" cy="24" r="5"/></g><rect x="12" y="12" width="8" height="8" rx="2" fill="var(--ink)"/></svg><span>Hover<b>Lab</b></span></a>
   <div class="links"><a href="#sahne">Simülasyon</a><a href="#tasarim">Tasarım</a><a href="#pid">PID</a><a href="#model">Nasıl hesaplıyor?</a></div>
   <button class="langbtn" id="langBtn" type="button" data-i18n-skip aria-label="Dil / Language"><span data-l="en" title="English"><svg class="flag" viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><clipPath id="fgT"><path d="M30,15h30v15zv15h-30zh-30v-15zv-15h30z"/></clipPath><path d="M0,0v30h60v-30z" fill="#012169"/><path d="M0,0L60,30M60,0L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0L60,30M60,0L0,30" clip-path="url(#fgT)" stroke="#C8102E" stroke-width="4"/><path d="M30,0v30M0,15h60" stroke="#fff" stroke-width="10"/><path d="M30,0v30M0,15h60" stroke="#C8102E" stroke-width="6"/></svg>EN</span><span data-l="tr" title="Türkçe"><svg class="flag" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="1200" height="800" fill="#E30A17"/><circle cx="425" cy="400" r="200" fill="#fff"/><circle cx="475" cy="400" r="160" fill="#E30A17"/><path fill="#fff" d="M583.334,400 764.235,458.779 652.431,304.894V495.106L764.235,341.221z"/></svg>TR</span></button>
 </div></nav>
 
-<div class="wrap" id="ust">
+<main class="wrap" id="ust">
   <section class="hero">
     <div>
-      <span class="badge">Ücretsiz · açık kaynak · tarayıcıda çalışır</span>
+      <span class="badge">Ücretsiz · kurulum yok · tarayıcıda çalışır</span>
       <div style="display:flex;gap:14px;align-items:center"><svg class="mascot" viewBox="0 0 64 64" aria-hidden="true"><g stroke="var(--ink)" stroke-width="3.2" stroke-linecap="round"><path d="M16 16l32 32M48 16L16 48"/></g><g transform="translate(14 14)"><circle r="9" fill="var(--accent)" opacity=".14"/><g class="rot"><rect x="-9" y="-1.3" width="18" height="2.6" rx="1.3" fill="var(--accent)"/></g><circle r="2.2" fill="var(--ink)"/></g><g transform="translate(50 14)"><circle r="9" fill="var(--accent)" opacity=".14"/><g class="rot"><rect x="-9" y="-1.3" width="18" height="2.6" rx="1.3" fill="var(--accent)"/></g><circle r="2.2" fill="var(--ink)"/></g><g transform="translate(14 50)"><circle r="9" fill="var(--accent)" opacity=".14"/><g class="rot"><rect x="-9" y="-1.3" width="18" height="2.6" rx="1.3" fill="var(--accent)"/></g><circle r="2.2" fill="var(--ink)"/></g><g transform="translate(50 50)"><circle r="9" fill="var(--accent)" opacity=".14"/><g class="rot"><rect x="-9" y="-1.3" width="18" height="2.6" rx="1.3" fill="var(--accent)"/></g><circle r="2.2" fill="var(--ink)"/></g><rect x="21" y="23" width="22" height="18" rx="8" fill="var(--accent)"/><circle cx="28" cy="31" r="3.2" fill="#fff"/><circle cx="36" cy="31" r="3.2" fill="#fff"/><circle cx="28.6" cy="31.4" r="1.6" fill="var(--ink)"/><circle cx="36.6" cy="31.4" r="1.6" fill="var(--ink)"/><path d="M29 36.5q3 2 6 0" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg><h1 data-en-html="&lt;em&gt;Design&lt;/em&gt; your drone, fly it, measure it.">Drone'unu <em>tasarla</em>, uçur, ölç.</h1></div>
       <p>Bileşenleri ve motor–pervane–batarya değerlerini gir. İtki, akım, hover gazı ve uçuş süresi anında hesaplanır; drone sahnede aynı fizikle uçar.</p>
     </div>
     <div class="presets" id="presets" role="group" aria-label="Hazır şablonlar"></div>
+    <button class="dz-cta" type="button" data-open-dz aria-haspopup="dialog" aria-controls="dzDoc"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.8l1.7 4.9 4.9 1.7-4.9 1.7L10 15l-1.7-4.9L3.4 8.4l4.9-1.7zM16 13l.8 2.2L19 16l-2.2.8L16 19l-.8-2.2L13 16l2.2-.8z"/></svg><span><b>Akıllı tasarımcı</b><small>Hedefini söyle, katalogdan en uygun 3 drone'u kuralım</small></span></button>
   </section>
 
   <section class="stage" id="sahne" aria-label="Uçuş simülasyonu">
@@ -456,7 +580,7 @@ body.noscroll{overflow:hidden}
 
   <section class="main" id="tasarim">
     <div class="card">
-      <header><h2>Drone'unu oluştur</h2><div class="row"><span class="mono" id="massHead" style="color:var(--muted);font-size:13px"></span><button class="btn sm" id="savedBtn" aria-expanded="false" aria-controls="savedPanel">Tasarımlarım</button></div></header>
+      <header><h2>Drone'unu oluştur</h2><div class="row"><span class="mono" id="massHead" style="color:var(--muted);font-size:13px"></span><button class="btn sm compat-open" id="compatBtn" type="button" data-open-compat aria-haspopup="dialog" aria-controls="compatDoc"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2.5l6 2.3v4.6c0 3.9-2.6 6.9-6 8.1-3.4-1.2-6-4.2-6-8.1V4.8z"/><path d="M7.2 10l2 2 3.6-3.8"/></svg><span>Uygunluk</span><span class="pill compat-badge" data-i18n-skip></span></button><button class="btn sm dz-open" type="button" data-open-dz aria-haspopup="dialog" aria-controls="dzDoc"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.8l1.7 4.9 4.9 1.7-4.9 1.7L10 15l-1.7-4.9L3.4 8.4l4.9-1.7zM16 13l.8 2.2L19 16l-2.2.8L16 19l-.8-2.2L13 16l2.2-.8z"/></svg><span>Akıllı tasarımcı</span></button><button class="btn sm" id="savedBtn" aria-expanded="false" aria-controls="savedPanel">Tasarımlarım</button></div></header>
       <div class="saved" id="savedPanel" hidden>
         <div class="row nowrap"><label class="lbl" for="saveName" style="position:absolute;left:-9999px">Tasarım adı</label><input type="text" id="saveName" maxlength="40" placeholder="Tasarım adı, ör. Mikro v2"><button class="btn primary" id="saveBtn">Kaydet</button></div>
         <p class="hint" id="saveMsg" aria-live="polite" style="margin:6px 0 0"></p>
@@ -505,6 +629,7 @@ body.noscroll{overflow:hidden}
         </div>
         <div class="compfoot">
           <button class="btn" id="addRow">+ Özel bileşen</button>
+          <span class="rp"><button class="btn" id="rpPdf" type="button"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 2.5h7l3.5 3.5v11.5h-10.5z"/><path d="M12 2.5V6h3.5M7.5 11h5M7.5 14h5"/></svg>PDF rapor</button><button class="btn" id="rpCsv" type="button">CSV</button><button class="btn" id="cmpAddBtn" type="button"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 16V8M10 16V4M16 16v-6"/></svg>+ Karşılaştır</button><span class="toast" id="rpMsg" aria-live="polite"></span></span>
           <span class="hint" style="margin:0">Ağırlıklar katalogdaki tipik değerlerdir; kendi tarttığın değeri yaz. Turuncu adet motor sayısını izler.</span>
         </div>
       </div>
@@ -573,13 +698,13 @@ body.noscroll{overflow:hidden}
 
       <div class="card">
         <header><h2>Kontroller</h2><span class="pill" id="checkSum"></span></header>
-        <div class="body" style="padding-top:6px"><ul class="checks" id="warns"></ul></div>
+        <div class="body" style="padding-top:6px"><ul class="checks" id="warns"></ul><button class="compat-cta" type="button" data-open-compat aria-haspopup="dialog" aria-controls="compatDoc"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2.5l6 2.3v4.6c0 3.9-2.6 6.9-6 8.1-3.4-1.2-6-4.2-6-8.1V4.8z"/><path d="M7.2 10l2 2 3.6-3.8"/></svg><span><b>Uygunluk ve uçuş riski</b><small>Parça uyumu, eksik parçalar, uçuş öncesi liste</small></span><span class="pill compat-badge" data-i18n-skip></span></button></div>
       </div>
 
       <div class="card">
         <header><h2>Çalışma noktaları</h2></header>
-        <div class="body tablewrap">
-          <table><thead><tr><th></th><th>Hover</th><th>%50 gaz</th><th>Tam gaz</th></tr></thead><tbody id="opTable"></tbody></table>
+        <div class="body tablewrap" tabindex="0">
+          <table><thead><tr><th><span class="sr">Değer</span></th><th>Hover</th><th>%50 gaz</th><th>Tam gaz</th></tr></thead><tbody id="opTable"></tbody></table>
         </div>
       </div>
     </div>
@@ -625,7 +750,7 @@ body.noscroll{overflow:hidden}
       <details class="adv codebox">
         <summary>Bu kazançlarla ESP32 + MPU-6050 başlangıç kodu</summary>
         <div class="row" style="margin-top:10px"><button class="btn sm" id="pidCopy">Kodu kopyala</button><span class="toast" id="pidCopyMsg" aria-live="polite"></span></div>
-        <pre><code id="pidCode"></code></pre>
+        <pre tabindex="0"><code id="pidCode"></code></pre>
       </details>
     </div>
   </section>
@@ -639,21 +764,47 @@ body.noscroll{overflow:hidden}
       <p data-en-html="&lt;b&gt;Limits.&lt;/b&gt; Results are static thrust. Thrust drops in forward flight and wind; flight time is for steady hover only. Check against the manufacturer’s thrust table before buying parts."><b>Sınırlar.</b> Sonuçlar statik itkidir. İleri uçuşta ve rüzgârda itki azalır; uçuş süresi yalnızca sabit hover içindir. Parça seçmeden önce üreticinin itki tablosuyla doğrula.</p>
     </div>
   </section>
-</div>
+</main>
 
 <footer class="foot">
   <p data-en-html="&lt;strong&gt;HoverLab&lt;/strong&gt; results are estimates from a physical model. Everything runs in your browser; no data is sent to a server."><strong>HoverLab</strong> sonuçları fiziksel modele dayalı tahminlerdir. Hesaplar tarayıcında yapılır, hiçbir veri sunucuya gönderilmez.</p>
-  <p class="mono"><a id="repoLink" href="#" hidden>Kaynak kodu</a> Açık kaynak · MIT · v2.3.1</p>
+  <p class="mono">© 2026 HoverLab · v2.7</p>
 </footer>
 
 
+<button class="side-tab" type="button" data-open-compat aria-haspopup="dialog" aria-controls="compatDoc"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2.5l6 2.3v4.6c0 3.9-2.6 6.9-6 8.1-3.4-1.2-6-4.2-6-8.1V4.8z"/><path d="M7.2 10l2 2 3.6-3.8"/></svg><span>Uygunluk</span></button>
+<div class="drawer-back" id="compatBack" hidden></div>
+<div class="drawer" id="compatDoc" role="dialog" aria-modal="true" aria-labelledby="compatTitle" hidden data-i18n-skip>
+  <div class="drawer-head">
+    <h2 id="compatTitle"><span data-lang="tr">Uygunluk ve uçuş riski</span><span data-lang="en" hidden>Compatibility &amp; flight risk</span></h2>
+    <button class="ibtn" id="compatClose" aria-label="Kapat / Close"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg></button>
+  </div>
+  <div class="drawer-body" tabindex="0" id="compatBody"></div>
+</div>
+<div class="drawer-back" id="dzBack" hidden></div>
+<div class="drawer" id="dzDoc" role="dialog" aria-modal="true" aria-labelledby="dzTitle" hidden data-i18n-skip>
+  <div class="drawer-head">
+    <h2 id="dzTitle">Akıllı tasarımcı</h2>
+    <button class="ibtn" id="dzClose" aria-label="Kapat / Close"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg></button>
+  </div>
+  <div class="drawer-body" tabindex="0" id="dzBody"></div>
+</div>
+<button class="cmp-tray" id="cmpTray" type="button" data-open-cmp aria-haspopup="dialog" aria-controls="cmpDoc" hidden data-i18n-skip><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 16V8M10 16V4M16 16v-6"/></svg><span>Karşılaştır</span></button>
+<div class="drawer-back" id="cmpBack" hidden></div>
+<div class="drawer wide" id="cmpDoc" role="dialog" aria-modal="true" aria-labelledby="cmpTitle" hidden data-i18n-skip>
+  <div class="drawer-head">
+    <h2 id="cmpTitle">Tasarım karşılaştırma</h2>
+    <button class="ibtn" id="cmpClose" aria-label="Kapat / Close"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg></button>
+  </div>
+  <div class="drawer-body" tabindex="0" id="cmpBody"></div>
+</div>
 <div class="drawer-back" id="pidDocBack" hidden></div>
-<aside class="drawer" id="pidDoc" role="dialog" aria-modal="true" aria-labelledby="pidDocTitle" hidden data-i18n-skip>
+<div class="drawer" id="pidDoc" role="dialog" aria-modal="true" aria-labelledby="pidDocTitle" hidden data-i18n-skip>
   <div class="drawer-head">
     <h2 id="pidDocTitle"><span data-lang="tr">PID kontrol, baştan sona</span><span data-lang="en" hidden>PID control, from the ground up</span></h2>
     <button class="ibtn" id="pidDocClose" aria-label="Kapat / Close"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg></button>
   </div>
-  <div class="drawer-body">
+  <div class="drawer-body" tabindex="0">
 
   <!-- ===================== TÜRKÇE ===================== -->
   <div data-lang="tr">
@@ -661,7 +812,7 @@ body.noscroll{overflow:hidden}
 
     <h3>Tek cümlede fikir</h3>
     <p>Hedefle ölçüm arasındaki farka <b>hata</b> denir: <code>e = hedef − ölçüm</code>. PID bu hataya üç farklı açıdan bakar ve üçünü toplayarak motora komut verir:</p>
-    <div class="formula">u(t) = K<sub>p</sub>·e(t) + K<sub>i</sub>·∫e(t)dt + K<sub>d</sub>·de(t)/dt</div>
+    <div class="formula" tabindex="0">u(t) = K<sub>p</sub>·e(t) + K<sub>i</sub>·∫e(t)dt + K<sub>d</sub>·de(t)/dt</div>
     <div class="ptriad">
       <div><b class="tp">P</b><span>Şimdi</span><small>Hata ne kadar büyük?</small></div>
       <div><b class="ti">I</b><span>Geçmiş</span><small>Hata ne zamandır var?</small></div>
@@ -728,7 +879,7 @@ body.noscroll{overflow:hidden}
 
     <h3>Kodda nasıl görünür?</h3>
     <p>Mikrodenetleyici integrali ve türevi her döngüde küçük adımlarla (<code>dt</code>) yaklaşık hesaplar:</p>
-<pre><code>float e = hedef - aci;                 // hata
+<pre tabindex="0"><code>float e = hedef - aci;                 // hata
 I = constrain(I + Ki * e * dt, -LIM, LIM); // biriken hata (sınırlı)
 float D = -Kd * gyroHiz;               // türev: jiroskoptan
 float cikis = Kp * e + I + D;          // motor karıştırıcıya gider</code></pre>
@@ -762,7 +913,7 @@ float cikis = Kp * e + I + D;          // motor karıştırıcıya gider</code><
 
     <h3>The idea in one sentence</h3>
     <p>The difference between the target and the measurement is the <b>error</b>: <code>e = target − measurement</code>. PID looks at that error in three ways and adds them up to command the motors:</p>
-    <div class="formula">u(t) = K<sub>p</sub>·e(t) + K<sub>i</sub>·∫e(t)dt + K<sub>d</sub>·de(t)/dt</div>
+    <div class="formula" tabindex="0">u(t) = K<sub>p</sub>·e(t) + K<sub>i</sub>·∫e(t)dt + K<sub>d</sub>·de(t)/dt</div>
     <div class="ptriad">
       <div><b class="tp">P</b><span>Present</span><small>How big is the error?</small></div>
       <div><b class="ti">I</b><span>Past</span><small>How long has it been there?</small></div>
@@ -829,7 +980,7 @@ float cikis = Kp * e + I + D;          // motor karıştırıcıya gider</code><
 
     <h3>What it looks like in code</h3>
     <p>The microcontroller approximates the integral and the derivative in small steps (<code>dt</code>) every loop:</p>
-<pre><code>float e = target - angle;              // error
+<pre tabindex="0"><code>float e = target - angle;              // error
 I = constrain(I + Ki * e * dt, -LIM, LIM); // accumulated error (limited)
 float D = -Kd * gyroRate;              // derivative: from the gyro
 float out = Kp * e + I + D;            // goes to the motor mixer</code></pre>
@@ -857,7 +1008,7 @@ float out = Kp * e + I + D;            // goes to the motor mixer</code></pre>
     <p>This lab uses a single <b>angle</b> loop, the clearest way to learn and to fly a first drone. Firmware like Betaflight runs two nested loops: an outer loop turning angle error into a target rotation rate, and a fast inner PID holding that rate with the gyro. On top, <b>feedforward</b> reacts to the pilot’s stick without waiting for an error, and low-pass and notch filters clean up the gyro signal.</p>
   </div>
   </div>
-</aside>
+</div>
 
 <!-- three.js önce yerelden, bulunamazsa CDN'den yüklenir -->
 <script src="vendor/three.min.js"></script>
@@ -866,7 +1017,7 @@ float out = Kp * e + I + D;            // goes to the motor mixer</code></pre>
 <script>
 /* HoverLab · core.js
  * Ortak yardımcılar: DOM seçici, sayı biçimlendirme, tuval kurulumu.
- * Lisans: MIT */
+ * © 2026 HoverLab. Tüm hakları saklıdır. */
 'use strict';
 
 const G = 9.80665;
@@ -887,7 +1038,7 @@ function niceMax(v){ if(v<=0) return 1; const p=Math.pow(10,Math.floor(Math.log1
  * Dil desteği (Türkçe / English). Kaynak dil Türkçedir; anahtarlar Türkçe metnin kendisidir.
  * - Sabit HTML: sayfa yüklenince ve dil değişince metin düğümleri ile placeholder/aria-label/title çevrilir.
  * - Dinamik metinler: kod, ekrana yazdığı yerde T() çağırır. "{}" içeren anahtarlar kalıptır (sayılar, adlar).
- * Yeni metin eklerken EN sözlüğüne bir satır ekle. Lisans: MIT */
+ * Yeni metin eklerken EN sözlüğüne bir satır ekle. © 2026 HoverLab. Tüm hakları saklıdır. */
 'use strict';
 
 const BRAND = 'HoverLab';
@@ -896,7 +1047,7 @@ let LANG = 'tr';
 const EN = {
   // ---- gezinme ve üst bölüm
   'Ana gezinme':'Main navigation','Simülasyon':'Simulation','Tasarım':'Design','Nasıl hesaplıyor?':'How it works',
-  'Ücretsiz · açık kaynak · tarayıcıda çalışır':'Free · open source · runs in your browser',
+  'Ücretsiz · kurulum yok · tarayıcıda çalışır':'Free · no install · runs in your browser',
   "Bileşenleri ve motor–pervane–batarya değerlerini gir. İtki, akım, hover gazı ve uçuş süresi anında hesaplanır; drone sahnede aynı fizikle uçar.":
     'Pick your parts and enter motor, prop and battery values. Thrust, current, hover throttle and flight time are calculated instantly, and the drone flies in the scene with the same physics.',
   'Hazır şablonlar':'Presets','Uçuş simülasyonu':'Flight simulation','3B uçuş sahnesi. Sürükleyerek kamerayı döndür.':'3D flight scene. Drag to orbit the camera.',
@@ -945,6 +1096,10 @@ const EN = {
   'Gaz – itki eğrisi':'Throttle – thrust curve','İtki / motor':'Thrust / motor','Akım / motor':'Current / motor','Hover ihtiyacı':'Hover need',
   'Gaz yüzdesine göre motor başına itki ve akım grafiği':'Per-motor thrust and current versus throttle','Hover %{}':'Hover {1}%','{} g':'{1} g',
   'Gaz %{}':'Throttle {1}%','İtki {} g':'Thrust {1} g','Akım {} A':'Current {1} A','{} rpm':'{1} rpm',
+  'Akıllı tasarımcı':'Smart designer',"Hedefini söyle, katalogdan en uygun 3 drone'u kuralım":'Tell us your goal; we build the 3 best drones from the catalog','PDF rapor':'PDF report',
+  'Karşılaştır':'Compare','+ Karşılaştır':'+ Compare',
+  'Değer':'Value','İçeriğe geç':'Skip to content',
+  'Uygunluk':'Compatibility','Uygunluk ve uçuş riski':'Compatibility & flight risk','Parça uyumu, eksik parçalar, uçuş öncesi liste':'Part matching, missing parts, pre-flight list',
   'Kontroller':'Checks','Çalışma noktaları':'Operating points','%50 gaz':'50% throttle','Tam gaz':'Full throttle','Devir':'RPM','Toplam itki':'Total thrust',
   'Batarya akımı':'Battery current','Batarya gerilimi':'Battery voltage','Verim':'Efficiency',
   'Henüz bileşen yok':'No parts yet','Bileşen ekledikçe kontroller burada belirir.':'Checks appear here as you add parts.',
@@ -1118,7 +1273,7 @@ const tt = s => T(s);  // kısa ad: bazı fonksiyonlarda T yerel değişken adı
 <script>
 /* HoverLab · catalog.js
  * Bileşen kataloğu ve hazır şablonlar. Yeni parça eklemek için RAW dizisine satır ekle (bkz. CONTRIBUTING.md).
- * Lisans: MIT */
+ * © 2026 HoverLab. Tüm hakları saklıdır. */
 'use strict';
 
 /* ================= catalog ================= */
@@ -1433,6 +1588,8 @@ const norm = s => s.toLocaleLowerCase('tr').normalize('NFD').replace(/[̀-ͯ]/g,
 const CATALOG = RAW.map(([cat,name,w,spec,tags],id)=>({id,cat,name,w,spec,hay:norm(`${name} ${trName(name)} ${CAT[cat]} ${EN[CAT[cat]]||''} ${tags||''}`)}));
 function specText(it){
   const s=it.spec;
+  if (it.cat==='frame' && typeof FRAME_INFO!=='undefined' && FRAME_INFO[it.name]){ const [mp,a]=FRAME_INFO[it.name];
+    return tl(`en çok ${fmt(mp,1)}″ pervane · ${a} kol`, `props up to ${fmt(mp,1)}″ · ${a} arms`); }
   if (it.cat==='motor') return `${fmt(s.kv)} KV · ${fmt(s.imax)} A`;
   if (it.cat==='prop') return `${fmt(s.d,1)}×${fmt(s.p,1)} inç · ${s.b} kanat`;
   if (it.cat==='battery') return `${s.cells}S · ${fmt(s.cap)} mAh · ${fmt(s.crate)}C`;
@@ -1473,7 +1630,7 @@ const PRESETS = {
     motor:{kv:14000,rm:0.8,i0:0.15,imax:2}, prop:{d:2.2,p:1.0,b:2},
     bat:{chem:'lipo',cells:1,cap:350,crate:25,rint:0.12,esc:4,avA:0.15,usable:80}, env:{alt:0,temp:20,cda:0.004}},
   hexa6:{label:'Heksa taşıyıcı', sub:'4S · 6 motor', motorCount:6,
-    components:[P('Heksakopter gövdesi 550 mm',560,1,false,'frame'),P('3508 fırçasız 700KV',80,6,true,'motor'),P('12×4,5 2 kanat (1245)',18,6,true,'prop'),
+    components:[P('Heksa 680 katlanır gövde',900,1,false,'frame'),P('3508 fırçasız 700KV',80,6,true,'motor'),P('12×4,5 2 kanat (1245)',18,6,true,'prop'),
       P('ESC 40A tekli',32,6,true,'esc'),P('Pixhawk 6C',59,1,false,'fc'),P('GPS M9N + pusula',25,1,false,'sensor'),P('Telemetri radyosu 433/915 MHz',15,1,false,'rx'),
       P('ELRS 900 MHz alıcı',2,1,false,'rx'),P('2 eksen gimbal + kamera',200,1,false,'video'),P('4S 5000 mAh LiPo',480,1,false,'battery'),
       P('İniş takımı (karbon, çift kızak)',120,1,false,'other'),P('Acil durum paraşütü (1,5 m²)',180,1,false,'safety',{chute:1.5}),P('Kablo, vida, kayış',60,1,false,'other')],
@@ -1494,7 +1651,7 @@ const PRESETS = {
 <script>
 /* HoverLab · physics.js
  * Motor–pervane–batarya modeli. DOM kullanmaz; tests/ altındaki testler bu dosyayı doğrudan çalıştırır.
- * Lisans: MIT */
+ * © 2026 HoverLab. Tüm hakları saklıdır. */
 'use strict';
 
 /* global S */
@@ -1538,7 +1695,7 @@ function hoverAt(Voc){
 <script>
 /* HoverLab · ui.js
  * Tasarım arayüzü: şablonlar, girdiler, bileşen listesi, katalog araması, sonuçlar ve grafik.
- * Lisans: MIT */
+ * © 2026 HoverLab. Tüm hakları saklıdır. */
 'use strict';
 
 /* ================= presets (UI) ================= */
@@ -1738,12 +1895,13 @@ function recompute(){
     ['Akım / motor',o=>fmt(o.Im*o.d,1)+' A'],['Batarya akımı',o=>fmt(o.Ib,1)+' A'],['Batarya gerilimi',o=>fmt(o.V,2)+' V'],['Güç',o=>fmt(o.Pbat)+' W'],
     ['Verim',o=>fmt(o.Pbat>0?(o.Ttot/G*1000)/o.Pbat:0,2)+' g/W']];
   $('opTable').innerHTML=rows.map(([k,f])=>`<tr><td>${esc(tt(k))}</td><td>${hov?f(hov):'—'}</td><td>${f(half)}</td><td>${f(full)}</td></tr>`).join('');
-  renderChecks(); drawChart(); try{ pidUpdate(); }catch(e){ console.error(e); } save();
+  renderChecks(); drawChart(); try{ pidUpdate(); }catch(e){ console.error(e); } try{ if (typeof compatUpdate==='function') compatUpdate(); }catch(e){ console.error(e); } save();
 }
-function renderChecks(){
+// Kontrol listesini üretir (DOM'a dokunmaz; karşılaştırma ekranı da kullanır). R, S ve C güncel olmalı.
+function checksList(){
   const {full,hov,TW,mG}=R, L=[];
   const add=(l,t,m)=>L.push({l,t,m});
-  if (mG<=0){ $('warns').innerHTML=`<li><span class="ic" style="color:var(--muted)">i</span><div><b>${esc(tt('Henüz bileşen yok'))}</b><span>${esc(tt('Bileşen ekledikçe kontroller burada belirir.'))}</span></div></li>`; $('checkSum').textContent=''; return; }
+  if (mG<=0) return L;
   if (TW<1) add('bd','Yerden kalkamaz',`Tam gaz itkisi ${fmt(full.Ttot/G*1000)} g, kütle ${fmt(mG)} g. Daha büyük pervane, yüksek KV/gerilim ya da hafif parça gerekir.`);
   else if (TW<1.6) add('bd','İtki payı çok düşük',`İtki/ağırlık ${fmt(TW,2)}. Kalkar ama manevra ve rüzgâr için pay neredeyse yok; en az 2:1 hedefle.`);
   else if (TW<2) add('wn','İtki payı sınırda',`İtki/ağırlık ${fmt(TW,2)}. Sakin havada yeterli, sert manevrada zayıf.`);
@@ -1775,6 +1933,11 @@ function renderChecks(){
   if (!S.components.some(c=>c.cat==='sensor'&&/mpu|imu|bmi|icm/i.test(c.name)) && !S.components.some(c=>c.cat==='fc'&&/f4|f7|h7|pixhawk|cube|aio|yığın|stack/i.test(c.name)))
     add('wn','IMU yok',`Listede IMU/MPU görünmüyor. Ayrı modül kullanıyorsan ekle.`);
   const ord={bd:0,wn:1,ok:2}; L.sort((a,b)=>ord[a.l]-ord[b.l]);
+  return L;
+}
+function renderChecks(){
+  const L=checksList(); R.checks=L;
+  if (R.mG<=0){ $('warns').innerHTML=`<li><span class="ic" style="color:var(--muted)">i</span><div><b>${esc(tt('Henüz bileşen yok'))}</b><span>${esc(tt('Bileşen ekledikçe kontroller burada belirir.'))}</span></div></li>`; $('checkSum').textContent=''; return; }
   const ic={bd:'×',wn:'!',ok:'✓'}, cls={bd:'bd',wn:'wn',ok:'ok'};
   $('warns').innerHTML=L.map(x=>`<li><span class="ic ${cls[x.l]}">${ic[x.l]}</span><div><b>${esc(tt(x.t))}</b><span>${esc(tt(x.m))}</span></div></li>`).join('');
   const nb=L.filter(x=>x.l==='bd').length, nw=L.filter(x=>x.l==='wn').length;
@@ -1827,10 +1990,799 @@ $('chart').addEventListener('pointermove',e=>{ if(!CH) return; const r=e.current
 $('chart').addEventListener('pointerleave',()=>{ chartHover=null; drawChart(); });
 </script>
 <script>
+/* HoverLab · compat.js
+ * Uygunluk paneli: parça uyumu, "uçuşa hazır mı?" listesi ve uçuş riski puanı.
+ * compatEval() DOM kullanmaz; tests/ altında doğrudan çalıştırılır. Çizim kısmı yalnızca tarayıcıda devreye girer.
+ * Metinler iki dilde yazılır: tl('Türkçe', 'English').
+ * © 2026 HoverLab. Tüm hakları saklıdır. */
+'use strict';
+
+const tl = (tr, en) => (typeof LANG!=='undefined' && LANG==='en') ? en : tr;
+
+/* ---- Katalog dışı bilgiler: gövde ve sürücü özellikleri ----
+ * Gövde: [en büyük pervane (inç), kol sayısı]
+ * Sürücü: [en az hücre, en çok hücre, 'bl' fırçasız | 'br' fırçalı, kanal sayısı] */
+const FRAME_INFO = {
+  '65 mm tiny whoop gövdesi':[1.25,4], '75 mm tiny whoop gövdesi':[1.6,4], 'Mikro fırçalı drone gövdesi (8520 uyumlu)':[2.3,4],
+  '3D baskı gövde (PLA, ~100 mm)':[2.5,4], '2,5" toothpick gövde':[2.5,4], '3" toothpick gövde':[3,4], '3" cinewhoop gövdesi (ductlu)':[3,4],
+  '3,5" cinewhoop gövdesi (ductlu)':[3.5,4], '4" mikro uzun menzil gövde':[4,4], '4" freestyle karbon gövde':[4,4], '5" freestyle karbon gövde':[5.2,4],
+  '6" freestyle karbon gövde':[6,4], '7" uzun menzil karbon gövde':[7.5,4], '8" cinelifter gövde':[8,4], '10" uzun menzil gövde':[10,4],
+  'X-Class 13" yarış gövdesi':[13,4], 'F450 kuadkopter gövdesi':[10,4], 'S500 gövde (iniş takımlı)':[12,4], 'Tarot 650 katlanır kuad gövde':[16,4],
+  'Heksakopter gövdesi 550 mm':[10.8,6], 'F550 heksakopter gövdesi':[10,6], 'Heksa 680 katlanır gövde':[13,6], 'Tarot 680 Pro heksa gövde (katlanır)':[13,6],
+  'Okta X8 gövde 1000 mm':[17,8],
+};
+const ESC_INFO = {
+  'L9110S motor sürücü':[1,2,'br',2], 'DRV8833 motor sürücü':[1,2,'br',2], 'TB6612FNG motor sürücü':[1,3,'br',2], 'MOSFET sürücü modülü (4 kanal)':[1,2,'br',4],
+  'IRF520 MOSFET modülü (tekli)':[1,3,'br',1], 'AO3400 MOSFET (tekli, SMD)':[1,2,'br',1],
+  "ESC 5A 4'ü 1 arada (fırçasız whoop)":[1,1,'bl',4], "ESC 12A 4'ü 1 arada (whoop)":[1,3,'bl',4], "ESC 20A 4'ü 1 arada (20×20)":[2,4,'bl',4],
+  "ESC 25A 4'ü 1 arada (20×20)":[2,6,'bl',4], "ESC 35A 4'ü 1 arada (20×20)":[2,6,'bl',4], "ESC 45A 4'ü 1 arada (30×30)":[3,6,'bl',4],
+  "ESC 55A 4'ü 1 arada (30×30)":[3,6,'bl',4], "ESC 60A 4'ü 1 arada (30×30)":[3,6,'bl',4], "ESC 70A 4'ü 1 arada (30×30)":[3,6,'bl',4],
+  'ESC 12A tekli':[2,3,'bl',1], 'ESC 20A tekli':[2,4,'bl',1], 'ESC 30A tekli':[2,4,'bl',1], 'ESC 40A tekli':[2,6,'bl',1], 'ESC 50A tekli':[2,6,'bl',1],
+  'ESC 60A tekli (ağır yük)':[3,6,'bl',1], 'ESC 80A tekli (ağır yük)':[3,6,'bl',1], 'ESC 120A tekli (12S)':[6,14,'bl',1],
+  'AIO whoop kartı (FC + ESC + alıcı)':[1,2,'bl',4], 'F411 AIO 1S whoop kartı (FC + ESC + ELRS)':[1,1,'bl',4],
+  'F405 AIO kart (25,5×25,5, 20A)':[2,4,'bl',4], 'F405 yığını (FC + 55A ESC)':[3,6,'bl',4],
+};
+
+const RE = {
+  brushed:/fırçalı|coreless|brushed/i, brushless:/fırçasız|brushless/i,
+  imu:/mpu|imu|bmi|icm/i, fcImu:/f4|f7|h7|pixhawk|cube|aio|yığın|stack|matek|flight controller|uçuş kontrolcüsü/i,
+  autopilot:/pixhawk|cube|matek|h743|ardupilot|px4/i, linuxOnly:/raspberry pi(?! pico)|jetson/i,
+  wireless:/esp32|esp8266|pico w|elrs|alıcı|receiver|wifi/i, gps:/gps/i, bt:/bluetooth|hc-05/i,
+  mount:/(\d+(?:[.,]\d+)?)\s*[×x]\s*(\d+(?:[.,]\d+)?)/,
+};
+const catByName = (()=>{ const m=new Map(); if (typeof CATALOG!=='undefined') CATALOG.forEach(it=>{ m.set(it.name,it); if (typeof trName==='function') m.set(trName(it.name),it); }); return m; })();
+const origName = c => { const it=catByName.get(c.name); return it?it.name:c.name; };
+function frameInfo(c){
+  const n=origName(c); if (FRAME_INFO[n]) return FRAME_INFO[n];
+  const arms = /hexa|heksa|f550/i.test(n)?6 : /okta|octa|x8/i.test(n)?8 : 4;
+  const inch = n.match(/(\d+(?:[.,]\d+)?)\s*(?:"|″|inç|inch)/i); if (inch) return [parseFloat(inch[1].replace(',','.')), arms];
+  const mm = n.match(/(\d{2,4})\s*mm/i); if (mm){ const wb=+mm[1]; return [wb*(arms===4?0.6:arms===6?0.5:0.383)/25.4, arms]; }
+  return null;
+}
+function escInfo(c){
+  const n=origName(c); if (ESC_INFO[n]) return ESC_INFO[n];
+  const br=RE.brushed.test(n)||/h köprü|mosfet|l298|drv|tb6612/i.test(n), four=/4'ü 1|4in1|4 in 1|4 kanal/i.test(n);
+  return [br?1:2, br?2:6, br?'br':'bl', four?4:1];
+}
+const mountOf = c => { const m=origName(c).match(RE.mount); return m ? parseFloat(m[1].replace(',','.')) : null; };
+
+/* ---- Değerlendirme ----
+ * perf: {full, checks} (ui.js'teki recompute sonuçları). Dönen: {empty, essentials, items, factors, score, level} */
+function compatEval(S, perf){
+  const comps=S.components, has=cat=>comps.filter(c=>c.cat===cat && (c.qty>0||c.pm));
+  const N=S.motorCount, items=[], add=(l,pair,t,m)=>items.push({l,pair,t,m});
+  if (!comps.length) return {empty:true, essentials:[], items:[], factors:[], score:0, level:'none'};
+  const frames=has('frame'), motors=has('motor'), props=has('prop'), escs=has('esc'), fcs=has('fc'), bats=has('battery'), rxs=has('rx'), sens=has('sensor');
+  const fcEsc=fcs.find(c=>{ const it=catByName.get(c.name); return it&&it.spec&&it.spec.esc; });
+  const driver = escs[0] || fcEsc || null;
+  const motorName = motors[0] ? origName(motors[0]) : '';
+  const isBrushed = motors.length>0 && RE.brushed.test(motorName) && !RE.brushless.test(motorName);
+  const hasImu = sens.some(c=>RE.imu.test(origName(c))) || fcs.some(c=>RE.fcImu.test(origName(c)));
+  const realFc = fcs.filter(c=>!RE.linuxOnly.test(origName(c)));
+  const hasLink = rxs.length>0 || fcs.some(c=>RE.wireless.test(origName(c)));
+  const cnt = c => c.pm ? N : c.qty;
+
+  /* 1) Uçuşa hazır mı? — olmazsa olmaz parçalar */
+  const essentials = [
+    {k:'frame', ok:frames.length>0, t:tl('Gövde','Frame')},
+    {k:'motor', ok:motors.length>0, t:tl(`Motorlar (${N})`,`Motors (${N})`)},
+    {k:'prop',  ok:props.length>0,  t:tl('Pervaneler','Propellers')},
+    {k:'esc',   ok:!!driver,        t:tl('ESC / sürücü','ESC / driver')},
+    {k:'fc',    ok:fcs.length>0,    t:tl('Uçuş kontrolcüsü','Flight controller')},
+    {k:'imu',   ok:hasImu,          t:tl('IMU (jiroskop)','IMU (gyro)')},
+    {k:'link',  ok:hasLink,         t:tl('Kumanda bağlantısı','Control link')},
+    {k:'bat',   ok:bats.length>0,   t:tl('Batarya','Battery')},
+  ];
+  const missing = essentials.filter(e=>!e.ok);
+  if (missing.length) add('bd', tl('Eksik parça','Missing parts'), tl('Uçuş için gerekli parçalar eksik','Parts needed for flight are missing'),
+    tl(`${missing.map(e=>e.t).join(', ')} listede yok. Bunlar olmadan drone kalkamaz ya da kontrol edilemez.`,
+       `${missing.map(e=>e.t).join(', ')} not in the list. Without them the drone can't take off or be controlled.`));
+
+  /* 2) Gövde ↔ pervane ve motor sayısı */
+  if (frames.length){
+    const fi=frameInfo(frames[0]);
+    if (!fi) add('i', tl('Gövde ↔ Pervane','Frame ↔ Prop'), tl('Gövde ölçüsü bilinmiyor','Frame size unknown'),
+      tl('Özel gövdede pervane uçları arasında ve gövdeyle en az 5 mm boşluk bırak.','On a custom frame keep at least 5 mm between prop tips and the frame.'));
+    else {
+      const [maxP, arms]=fi, d=S.prop.d;
+      if (d>maxP*1.04) add('bd', tl('Gövde ↔ Pervane','Frame ↔ Prop'), tl('Pervane gövdeye sığmıyor','Props don\'t fit the frame'),
+        tl(`${fmt(d,1)}″ pervane, bu gövdenin en fazla ${fmt(maxP,1)}″ sınırını aşıyor; uçlar birbirine ya da gövdeye çarpar.`,
+           `A ${fmt(d,1)}″ prop exceeds this frame's ${fmt(maxP,1)}″ limit; the tips will hit each other or the frame.`));
+      else if (d<maxP*0.6) add('wn', tl('Gövde ↔ Pervane','Frame ↔ Prop'), tl('Pervane gövdeye göre küçük','Props are small for the frame'),
+        tl(`Gövde ${fmt(maxP,1)}″ pervaneye kadar alıyor, seçilen ${fmt(d,1)}″. Daha büyük pervane aynı itkiyi daha az akımla verir.`,
+           `The frame takes up to ${fmt(maxP,1)}″, you chose ${fmt(d,1)}″. A larger prop gives the same thrust with less current.`));
+      else add('ok', tl('Gövde ↔ Pervane','Frame ↔ Prop'), tl('Pervane ölçüsü uygun','Prop size fits'),
+        tl(`${fmt(d,1)}″ pervane, gövdenin ${fmt(maxP,1)}″ sınırı içinde.`, `${fmt(d,1)}″ prop is within the frame's ${fmt(maxP,1)}″ limit.`));
+      if (arms!==N) add('bd', tl('Gövde ↔ Motor sayısı','Frame ↔ Motor count'), tl('Kol sayısı tutmuyor','Arm count mismatch'),
+        tl(`Gövdede ${arms} motor yeri var, tasarımda ${N} motor seçili.`, `The frame has ${arms} motor mounts, the design uses ${N} motors.`));
+    }
+  }
+
+  /* 3) Motor ↔ batarya gerilimi */
+  if (motors.length && bats.length){
+    const cells=S.bat.cells;
+    if (isBrushed){
+      const max2 = /7[,.]4 ?V|2s/i.test(motorName) ? 2 : 1;
+      if (cells>max2) add('bd', tl('Motor ↔ Batarya','Motor ↔ Battery'), tl('Gerilim fırçalı motor için fazla','Voltage too high for brushed motors'),
+        tl(`Fırçalı coreless motor ${max2}S için yapılmış, batarya ${cells}S. Motor kısa sürede yanar.`, `The brushed coreless motor is made for ${max2}S, the battery is ${cells}S. It will burn out quickly.`));
+      else add('ok', tl('Motor ↔ Batarya','Motor ↔ Battery'), tl('Gerilim uygun','Voltage fits'), tl(`${cells}S, fırçalı motorun aralığında.`, `${cells}S is within the brushed motor's range.`));
+    } else {
+      const hint = motorName.match(/\((\d+)S\)/i);
+      if (hint && cells>+hint[1]) add('bd', tl('Motor ↔ Batarya','Motor ↔ Battery'), tl('Batarya motor için yüksek gerilimli','Battery voltage too high for the motor'),
+        tl(`Motor ${hint[1]}S için sarılmış, batarya ${cells}S. Devir ve akım tasarım sınırını aşar.`, `The motor is wound for ${hint[1]}S, the battery is ${cells}S. RPM and current exceed its design limits.`));
+      else if (perf.full){
+        const free=S.motor.kv*perf.full.V, load=perf.full.rpm/Math.max(1,free);
+        const lbl=tl('Motor ↔ Pervane','Motor ↔ Prop');
+        if (load<0.5) add('bd', lbl, tl('Pervane motor için çok ağır','Prop too heavy for the motor'),
+          tl(`Tam gazda motor boştaki devrinin yalnızca %${fmt(load*100)}'ine çıkabiliyor; aşırı akım çeker ve ısınır. Daha küçük/az hatveli pervane ya da düşük KV'li daha büyük motor seç.`,
+             `At full throttle the motor reaches only ${fmt(load*100)}% of its no-load RPM; it draws too much current and overheats. Use a smaller/lower-pitch prop or a bigger low-KV motor.`));
+        else if (load<0.6) add('wn', lbl, tl('Pervane motoru zorluyor','Prop is loading the motor hard'),
+          tl(`Tam gaz devri boştaki devrin %${fmt(load*100)}'i. %65–90 arası sağlıklı kabul edilir.`, `Full-throttle RPM is ${fmt(load*100)}% of no-load. 65–90% is considered healthy.`));
+        else if (load>0.95) add('wn', lbl, tl('Pervane motor için küçük','Prop is small for the motor'),
+          tl(`Motor tam gazda neredeyse boşta dönüyor (%${fmt(load*100)}). Motorun gücü kullanılmıyor; daha büyük pervane daha verimli olur.`,
+             `The motor is almost unloaded at full throttle (${fmt(load*100)}%). Its power is wasted; a bigger prop would be more efficient.`));
+        else add('ok', lbl, tl('Motor ve pervane eşleşiyor','Motor and prop are matched'),
+          tl(`Tam gaz devri boştaki devrin %${fmt(load*100)}'i; sağlıklı aralıkta.`, `Full-throttle RPM is ${fmt(load*100)}% of no-load; within the healthy range.`));
+      }
+    }
+  }
+
+  /* 4) Sürücü ↔ motor tipi, batarya, kanal sayısı, akım */
+  if (driver && motors.length){
+    const [lo,hi,type,ch]=escInfo(driver), cells=S.bat.cells;
+    if (isBrushed && type==='bl') add('bd', tl('ESC ↔ Motor','ESC ↔ Motor'), tl('Fırçalı motora fırçasız ESC','Brushless ESC on brushed motors'),
+      tl('Fırçasız ESC üç faz üretir; fırçalı motor tek yönlü DC ister. MOSFET ya da H köprüsü sürücü kullan.', 'A brushless ESC drives three phases; a brushed motor needs plain DC. Use a MOSFET or H-bridge driver.'));
+    else if (!isBrushed && type==='br') add('bd', tl('ESC ↔ Motor','ESC ↔ Motor'), tl('Fırçasız motora fırçalı sürücü','Brushed driver on brushless motors'),
+      tl('Fırçasız motor üç fazlı ESC ister; MOSFET / H köprüsü onu döndüremez.', 'Brushless motors need a three-phase ESC; a MOSFET / H-bridge cannot spin them.'));
+    else add('ok', tl('ESC ↔ Motor','ESC ↔ Motor'), tl('Sürücü tipi doğru','Driver type is correct'),
+      isBrushed ? tl('Fırçalı motor + DC sürücü.','Brushed motor + DC driver.') : tl('Fırçasız motor + 3 fazlı ESC.','Brushless motor + 3-phase ESC.'));
+    if (bats.length){
+      if (cells>hi) add('bd', tl('Batarya ↔ ESC','Battery ↔ ESC'), tl('Batarya ESC için yüksek gerilimli','Battery voltage too high for the ESC'),
+        tl(`Sürücü en fazla ${hi}S destekliyor, batarya ${cells}S. İlk takılışta yanabilir.`, `The driver supports up to ${hi}S, the battery is ${cells}S. It may burn on first plug-in.`));
+      else if (cells<lo) add('wn', tl('Batarya ↔ ESC','Battery ↔ ESC'), tl('Batarya ESC için düşük gerilimli','Battery voltage too low for the ESC'),
+        tl(`Sürücü en az ${lo}S istiyor, batarya ${cells}S. Çalışmayabilir ya da düzensiz çalışır.`, `The driver needs at least ${lo}S, the battery is ${cells}S. It may not start or may run erratically.`));
+      else add('ok', tl('Batarya ↔ ESC','Battery ↔ ESC'), tl('Gerilim aralığı uygun','Voltage range fits'),
+        tl(`${cells}S, sürücünün ${lo}–${hi}S aralığında.`, `${cells}S is within the driver's ${lo}–${hi}S range.`));
+    }
+    const channels = escs.length ? escs.reduce((a,c)=>a+escInfo(c)[3]*cnt(c),0) : 4;
+    if (channels<N) add('bd', tl('ESC ↔ Motor sayısı','ESC ↔ Motor count'), tl('Sürücü kanalı yetmiyor','Not enough driver channels'),
+      tl(`${N} motor var ama sürücüler toplam ${channels} motor sürebilir.`, `There are ${N} motors but the drivers can run only ${channels}.`));
+    if (S.bat.esc < S.motor.imax*0.8) add('wn', tl('ESC ↔ Motor','ESC ↔ Motor'), tl('ESC akım sınıfı motordan düşük','ESC current rating below the motor'),
+      tl(`Motorun sürekli akımı ${fmt(S.motor.imax,1)} A, sürücü ${fmt(S.bat.esc,1)} A. Sert manevrada sürücü ısınır.`, `The motor's continuous current is ${fmt(S.motor.imax,1)} A, the driver is ${fmt(S.bat.esc,1)} A. It will heat up in hard manoeuvres.`));
+  }
+
+  /* 5) Kontrolcü ↔ ESC yuvası, kontrolcü türü, GPS, bağlantı */
+  const fcStack=realFc.find(c=>mountOf(c)), escStack=escs.find(c=>mountOf(c));
+  if (fcStack && escStack){ const a=mountOf(fcStack), b=mountOf(escStack);
+    if (Math.abs(a-b)>1) add('wn', tl('Kontrolcü ↔ ESC','FC ↔ ESC'), tl('Yığın ölçüleri farklı','Stack sizes differ'),
+      tl(`Kontrolcü ${fmt(a,1)} mm, ESC ${fmt(b,1)} mm vida aralığında; üst üste oturmaz, ara plaka ya da ayrı montaj gerekir.`, `FC is ${fmt(a,1)} mm, ESC is ${fmt(b,1)} mm hole spacing; they won't stack without an adapter plate.`));
+    else add('ok', tl('Kontrolcü ↔ ESC','FC ↔ ESC'), tl('Yığın ölçüsü uyumlu','Stack size matches'), tl(`İkisi de ${fmt(a,1)} mm.`, `Both are ${fmt(a,1)} mm.`)); }
+  if (fcs.length && !realFc.length) add('wn', tl('Kontrolcü','Controller'), tl('Yalnızca Linux kart var','Only a Linux board'),
+    tl('Raspberry Pi / Jetson gerçek zamanlı değildir; motorları doğrudan sürmek için ayrı bir uçuş kontrolcüsü ekle, bunu yardımcı bilgisayar olarak kullan.',
+       'Raspberry Pi / Jetson are not real-time; add a separate flight controller and use this as a companion computer.'));
+  if (realFc.some(c=>RE.autopilot.test(origName(c))) && !sens.some(c=>RE.gps.test(origName(c))))
+    add('wn', tl('Kontrolcü ↔ GPS','FC ↔ GPS'), tl('Otopilot var, GPS yok','Autopilot without GPS'),
+      tl('Eve dönüş, konum tutma ve görev uçuşu GPS olmadan çalışmaz.', 'Return-to-home, position hold and missions won\'t work without GPS.'));
+  if (hasLink && rxs.length && rxs.every(c=>RE.bt.test(origName(c))))
+    add('wn', tl('Kumanda bağlantısı','Control link'), tl('Bluetooth menzili kısa','Bluetooth range is short'),
+      tl('Bluetooth açık alanda ~10–30 m gider; bağlantı koparsa drone kontrolsüz kalır. Failsafe ayarla ya da ELRS/ESP-NOW kullan.',
+         'Bluetooth reaches ~10–30 m in the open; if the link drops the drone is uncontrolled. Set a failsafe or use ELRS/ESP-NOW.'));
+
+  /* 6) Ağırlık dağılımı */
+  const mG=totalMassG();
+  if (bats.length && mG>0){ const bw=bats.reduce((a,c)=>a+(c.w||0)*cnt(c),0), f=bw/mG;
+    if (f<0.15) add('wn', tl('Batarya ↔ Gövde','Battery ↔ Airframe'), tl('Batarya payı küçük','Battery share is small'),
+      tl(`Batarya toplam ağırlığın %${fmt(f*100)}'i. Uçuş süresi kısa kalır; %25–40 iyi bir aralık.`, `The battery is ${fmt(f*100)}% of total weight. Flight time will be short; 25–40% is a good range.`));
+    else if (f>0.5) add('wn', tl('Batarya ↔ Gövde','Battery ↔ Airframe'), tl('Batarya çok ağır','Battery is very heavy'),
+      tl(`Batarya toplam ağırlığın %${fmt(f*100)}'i. Fazla kapasite kendi ağırlığını taşımaya gider; süre artmaz, manevra kötüleşir.`, `The battery is ${fmt(f*100)}% of total weight. Extra capacity just carries itself; flight time stops improving and handling suffers.`));
+    else add('ok', tl('Batarya ↔ Gövde','Battery ↔ Airframe'), tl('Ağırlık dağılımı dengeli','Weight balance is good'),
+      tl(`Batarya toplam ağırlığın %${fmt(f*100)}'i.`, `The battery is ${fmt(f*100)}% of total weight.`)); }
+  add('i', tl('Mevzuat','Regulations'), mG<250 ? tl('250 g altı','Under 250 g') : tl('250 g ve üstü','250 g or more'),
+    mG<250 ? tl('Birçok ülkede en hafif kural sınıfı; yine de yerel kuralları kontrol et.', 'The lightest rule class in many countries; still check local rules.')
+           : tl('Çoğu ülkede kayıt ve pilot kuralları uygulanır (Türkiye\'de SHGM). Uçmadan önce kontrol et.', 'Most countries require registration and pilot rules for this class. Check before flying.'));
+
+  /* 7) Performans kontrollerinden gelen risk etkenleri */
+  const factors=(perf.checks||[]).filter(x=>x.l!=='ok');
+  const ord={bd:0,wn:1,ok:2,i:3}; items.sort((a,b)=>ord[a.l]-ord[b.l]);
+  const W={bd:22,wn:7};
+  let score=[...items,...factors].reduce((a,x)=>a+(W[x.l]||0),0);
+  score=Math.min(100,score);
+  const level = missing.length ? 'missing' : score>=70?'vhigh' : score>=40?'high' : score>=15?'mid' : 'low';
+  return {empty:false, essentials, items, factors, score, level, missing:missing.length};
+}
+
+/* ---- Tarayıcı tarafı: panel ---- */
+const LEVEL_TXT = {
+  low:   ()=>[tl('Düşük risk','Low risk'),        tl('Uçuşa hazır görünüyor. Yine de aşağıdaki uçuş öncesi listeyi uygula.','Looks ready to fly. Still go through the pre-flight list below.'),'ok'],
+  mid:   ()=>[tl('Orta risk','Moderate risk'),    tl('Uçabilir ama uyarıları gözden geçir.','It can fly, but review the warnings.'),'wn'],
+  high:  ()=>[tl('Yüksek risk','High risk'),      tl('Uçmadan önce kırmızı maddeleri düzelt.','Fix the red items before flying.'),'bd'],
+  vhigh: ()=>[tl('Çok yüksek risk','Very high risk'), tl('Bu haliyle uçurma.','Don\'t fly it as it is.'),'bd'],
+  missing:()=>[tl('Henüz uçamaz','Not flyable yet'), tl('Önce eksik parçaları tamamla.','Complete the missing parts first.'),'bd'],
+  none:  ()=>[tl('Parça yok','No parts'), tl('Parça ekledikçe uygunluk burada hesaplanır.','Compatibility is calculated here as you add parts.'),''],
+};
+let CE=null, compatLastFocus=null;
+function compatUpdate(){
+  if (typeof document==='undefined' || !document.getElementById('compatBtn')) return;
+  CE = compatEval(S, {full:R.full, checks:R.checks});
+  const [lbl,,cls]=LEVEL_TXT[CE.level]();
+  document.querySelectorAll('.compat-badge').forEach(b=>{ b.className='pill compat-badge '+cls; b.textContent=CE.empty?'—':lbl; });
+  if (!$('compatDoc').hidden) renderCompat();
+}
+function renderCompat(){
+  if (!CE) return;
+  const [lbl,sub,cls]=LEVEL_TXT[CE.level]();
+  const ic={bd:'×',wn:'!',ok:'✓',i:'i'};
+  const li = x => `<li><span class="ic ${x.l}">${ic[x.l]}</span><div>${x.pair?`<em class="pair">${esc(x.pair)}</em>`:''}<b>${esc(x.t)}</b><span>${esc(x.m)}</span></div></li>`;
+  const r=52, c=Math.PI*r, frac=CE.empty?0:CE.level==='missing'?1:CE.score/100;
+  const nOk=CE.items.filter(x=>x.l==='ok').length, nBd=CE.items.filter(x=>x.l==='bd').length, nWn=CE.items.filter(x=>x.l==='wn').length;
+  const pre = tl(['Pervaneler takılı değilken motor dönüş yönlerini ve kontrolcüdeki motor sırasını doğrula.','Kumanda kapanınca motorların durduğunu (failsafe) test et.',
+      'Bataryayı tam şarj et; hücre gerilimlerini ölç.','Pervane ve motor vidalarını sık; pervane yönlerini kontrol et.','Ağırlık merkezini gövdenin ortasına getir.',
+      'İlk kalkışı açık alanda, insanlardan uzakta, alçakta yap.'],
+    ['With props off, check motor spin directions and motor order in the controller.','Turn off the transmitter and confirm the motors stop (failsafe).',
+      'Fully charge the battery; measure cell voltages.','Tighten prop and motor screws; check prop directions.','Put the centre of gravity in the middle of the frame.',
+      'Do the first take-off low, in an open area, away from people.']);
+  $('compatBody').innerHTML = CE.empty ? `<p class="lead">${esc(sub)}</p>` : `
+    <div class="risk">
+      <svg viewBox="0 0 128 74" class="gauge" aria-hidden="true"><path d="M12 66a52 52 0 0 1 104 0" class="g-bg"/><path d="M12 66a52 52 0 0 1 104 0" class="g-fg ${cls}" style="stroke-dasharray:${c};stroke-dashoffset:${c*(1-frac)}"/></svg>
+      <div><div class="risk-lbl ${cls}">${esc(lbl)}</div><div class="risk-num">${esc(tl('Risk puanı','Risk score'))} <b>${CE.level==='missing'?'—':CE.score}</b>/100</div><p>${esc(sub)}</p></div>
+    </div>
+    <h3>${esc(tl('Uçuşa hazır mı?','Ready to fly?'))}</h3>
+    <ul class="ess">${CE.essentials.map(e=>`<li class="${e.ok?'ok':'bd'}"><span>${e.ok?'✓':'×'}</span>${esc(e.t)}</li>`).join('')}</ul>
+    <h3>${esc(tl('Parça uyumu','Part compatibility'))} <span class="cnt">${nBd?`<span class="pill bd">${nBd}</span>`:''}${nWn?`<span class="pill wn">${nWn}</span>`:''}<span class="pill ok">${nOk}</span></span></h3>
+    <ul class="checks">${CE.items.map(li).join('')}</ul>
+    <h3>${esc(tl('Uçuş riski etkenleri','Flight risk factors'))}</h3>
+    ${CE.factors.length ? `<ul class="checks">${CE.factors.map(x=>li({l:x.l,t:tt(x.t),m:tt(x.m)})).join('')}</ul>` : `<p>${esc(tl('Performans tarafında uyarı yok: itki, akım, batarya ve eğilme payı yeterli.','No performance warnings: thrust, current, battery and tilt margin are fine.'))}</p>`}
+    <h3>${esc(tl('Uçuş öncesi liste','Pre-flight list'))}</h3>
+    <ol class="pre">${pre.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>
+    <p class="fine">${esc(tl('Puan; uyum ve performans uyarılarından hesaplanan bir tahmindir (kritik 22, uyarı 7 puan). Parça verileri tipik değerlerdir; kendi parçalarının etiketini ve üretici tablolarını esas al.',
+      'The score is an estimate built from compatibility and performance warnings (critical 22, warning 7 points). Part data are typical values; trust your own parts\' labels and maker tables.'))}</p>`;
+}
+function openCompat(){ compatLastFocus=document.activeElement; renderCompat(); $('compatDoc').hidden=false; $('compatBack').hidden=false; document.body.classList.add('noscroll');
+  requestAnimationFrame(()=>{ $('compatDoc').classList.add('open'); $('compatBack').classList.add('open'); $('compatClose').focus(); }); }
+function closeCompat(){ $('compatDoc').classList.remove('open'); $('compatBack').classList.remove('open'); document.body.classList.remove('noscroll');
+  setTimeout(()=>{ $('compatDoc').hidden=true; $('compatBack').hidden=true; },220); if (compatLastFocus) compatLastFocus.focus(); }
+if (typeof document!=='undefined' && document.getElementById('compatBtn')){
+  document.querySelectorAll('[data-open-compat]').forEach(b=>b.addEventListener('click',openCompat));
+  $('compatClose').addEventListener('click',closeCompat); $('compatBack').addEventListener('click',closeCompat);
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('compatDoc').hidden) closeCompat(); });
+}
+</script>
+<script>
+/* HoverLab · designer.js
+ * Akıllı tasarımcı: kullanıcının hedefine (boyut, kullanım, motor sayısı, uçuş süresi, ek yük) göre katalogdaki
+ * gövde–motor–pervane–batarya–ESC kombinasyonlarını fizik modeliyle tarar ve en iyi 3 tasarımı önerir.
+ * designSearch() DOM kullanmaz; tests/ altında doğrudan çalıştırılır.
+ * © 2026 HoverLab. Tüm hakları saklıdır. */
+'use strict';
+
+/* ---- Sınıflar ve profiller ---- */
+const DZ_SIZES = {
+  micro: {lo:0,   hi:2.6,  avA:0.15, cable:4,  tr:'Mikro (≤2,5″)',     en:'Micro (≤2.5″)'},
+  small: {lo:2.6, hi:4.5,  avA:0.5,  cable:8,  tr:'Küçük (3–4″)',      en:'Small (3–4″)'},
+  fpv:   {lo:4.5, hi:6.5,  avA:0.8,  cable:18, tr:'FPV (5–6″)',        en:'FPV (5–6″)'},
+  lr:    {lo:6.5, hi:10.5, avA:0.9,  cable:22, tr:'Orta (7–10″)',      en:'Medium (7–10″)'},
+  big:   {lo:10.5,hi:99,   avA:1.2,  cable:40, tr:'Büyük (10″ üstü)',  en:'Large (over 10″)'},
+  any:   {lo:0,   hi:99,   avA:null, cable:null, tr:'Fark etmez',      en:'Any size'},
+};
+const DZ_USES = {
+  race:      {tw:5,   hover:0.40, tr:'Yarış / freestyle', en:'Racing / freestyle', score:(r)=>3*Math.min(r.tw,10)+0.5*r.tmin},
+  general:   {tw:3,   hover:0.50, tr:'Genel uçuş',        en:'General flying',     score:(r)=>r.tmin+4*Math.min(r.tw,5)},
+  endurance: {tw:1.8, hover:0.65, tr:'Uzun uçuş',         en:'Long flights',       score:(r)=>r.tmin+0.5*Math.min(r.tw,3)},
+  cargo:     {tw:2,   hover:0.65, tr:'Yük taşıma',        en:'Carrying a payload', score:(r)=>r.tmin+0.5*Math.min(r.tw,3)},
+};
+const sizeOf = d => d<=2.6?'micro':d<=4.5?'small':d<=6.5?'fpv':d<=10.5?'lr':'big';
+
+/* Önerilen elektronik seti (kullanıcının mevcut tasarımı yoksa) */
+function dzElectronics(sz, cls){
+  const C=(name,w)=>({name, w, qty:1, pm:false, cat:CATALOG.find(i=>i.name===name).cat});
+  if (sz==='micro') return [C('ESP32-C3 SuperMini',2),C('MPU-6050 IMU modülü (GY-521)',2.5),C('ESP-NOW (ESP32 dahili, ek ağırlık yok)',0)];
+  if (sz==='small') return [C('F411 uçuş kontrolcüsü (20×20)',4),C('ELRS 2,4 GHz alıcı (nano)',0.7),C('FPV kamera (nano)',3),C('Analog VTX 25–400 mW (nano)',2.5)];
+  if (sz==='fpv')   return [C('F405 uçuş kontrolcüsü (30×30)',8),C('ELRS alıcı (nano)',1),C('FPV kamera (mikro)',6),C('Analog VTX + anten',8)];
+  if (sz==='lr' && !cls.big) return [C('F405 uçuş kontrolcüsü (30×30)',8),C('ELRS 900 MHz alıcı',2),C('GPS M10 mini',8),C('FPV kamera (mikro)',6),C('Analog VTX + anten',8)];
+  return [C('Pixhawk 6C',59),C('GPS M9N + pusula',25),C('ELRS 900 MHz alıcı',2),C('Telemetri radyosu 433/915 MHz',15),C('Güç modülü (akım + gerilim)',15)];
+}
+
+/* En hafif uygun sürücü: tip, hücre aralığı, akım ve (4'ü 1 arada için) kontrolcü yığın ölçüsü */
+function dzPickEsc(N, brushed, cells, needA, imax, fcMount){
+  const need=Math.max(needA*1.15, imax*0.8);
+  let best=null;
+  CATALOG.filter(i=>i.cat==='esc').forEach(it=>{
+    const [lo,hi,type,ch]=escInfo({name:it.name});
+    if ((type==='br')!==brushed || cells<lo || cells>hi || it.spec.esc<need) return;
+    let qty, w;
+    if (ch===4){ if (N!==4) return; const m=mountOf({name:it.name}); if (m && fcMount && Math.abs(m-fcMount)>1) return; qty=1; w=it.w; }
+    else { qty=N; w=it.w*N; }
+    if (!best || w<best.wTot) best={it, qty, pm:ch===1, wTot:w};
+  });
+  return best;
+}
+
+/* ---- Hızlı yaklaşık değerlendirme ----
+ * operate() kütleden bağımsızdır; gaz–itki eğrisini 9 noktada örnekleyip hover noktasını doğrusal ara değerle buluruz.
+ * Son elemede en iyi adaylar tam modelle (operate + hoverAt) yeniden hesaplanır. */
+const DZ_D=[0.15,0.25,0.35,0.45,0.55,0.65,0.75,0.87,1];
+function dzCurve(){ return DZ_D.map(d=>operate(d)); }
+function dzHoverFromCurve(curve, W){
+  if (curve[curve.length-1].Ttot < W) return null;
+  for (let i=1;i<curve.length;i++){ const a=curve[i-1], b=curve[i];
+    if (b.Ttot>=W){ const t=(W-a.Ttot)/Math.max(1e-9,b.Ttot-a.Ttot); return {d:a.d+t*(b.d-a.d), Ib:a.Ib+t*(b.Ib-a.Ib)}; } }
+  return null;
+}
+// Gövde sınıfına göre gerçekçi en büyük kalkış ağırlığı (g): pervane çapının karesiyle ölçeklenir.
+const dzMaxAUW = (maxP, arms) => 30*maxP*maxP*(arms/4);
+
+/* ---- Arama ----
+ * goal: {size, use, n, minTime, payload, chem:'lipo'|'liion'|'any', elec:'auto'|'mine'}
+ * opts: {base: mevcut tasarım (S), onProgress(k), yieldEvery}
+ * Dönen: {results:[en fazla 3], tried, found, reasons} */
+async function designSearch(goal, opts={}){
+  const base=opts.base||S, use=DZ_USES[goal.use]||DZ_USES.general, N=goal.n||4, wantSize=DZ_SIZES[goal.size]?goal.size:'any';
+  const reasons={size:0, thrust:0, hover:0, current:0, battery:0, weight:0, compat:0, time:0};
+  const frames=CATALOG.filter(i=>i.cat==='frame' && FRAME_INFO[i.name]).filter(i=>{ const [mp,arms]=FRAME_INFO[i.name]; const sz=DZ_SIZES[wantSize];
+    return arms===N && mp>sz.lo && mp<=sz.hi; });
+  if (!frames.length) return {results:[], tried:0, found:0, reasons:{...reasons, size:1}, noFrame:true};
+  const props=CATALOG.filter(i=>i.cat==='prop'), motors=CATALOG.filter(i=>i.cat==='motor');
+  const bats=CATALOG.filter(i=>i.cat==='battery' && (goal.chem==='any'||!goal.chem||i.spec.chem===goal.chem));
+  const cellsList=[...new Set(bats.map(b=>b.spec.cells))];
+  const mineElec = goal.elec==='mine' ? base.components.filter(c=>['fc','sensor','rx','video','safety'].includes(c.cat)).map(c=>({...c})) : null;
+  const payload=Math.max(0, +goal.payload||0), minTime=Math.max(0,+goal.minTime||0);
+  const saved=S, env=base.env||{alt:0,temp:20,cda:0.02};
+  const cands=[]; let tried=0, k=0;
+  // Arayüz donmasın diye ~40 ms'de bir tarayıcıya nefes aldır (her adımda beklemek aramayı çok yavaşlatır)
+  const now=()=>(typeof performance!=='undefined'?performance.now():Date.now()); let last=now();
+  const tick=async()=>{ k++; if (now()-last>40){ if (opts.onProgress) opts.onProgress(k); await new Promise(r=>setTimeout(r,0)); last=now(); } };
+  try{
+    for (const fr of frames){
+      const [maxP, arms]=FRAME_INFO[fr.name], sz=sizeOf(maxP), szi=DZ_SIZES[sz], auwMax=dzMaxAUW(maxP, arms);
+      const elec = mineElec && mineElec.length ? mineElec : dzElectronics(sz, {big:N>4});
+      const fcRow = elec.find(c=>c.cat==='fc'), fcMount = fcRow ? mountOf(fcRow) : null;
+      const baseRows = [{name:fr.name,w:fr.w,qty:1,pm:false,cat:'frame'}, ...elec, {name:'Kablo, vida, kayış',w:szi.cable,qty:1,pm:false,cat:'other'}]
+        .concat(payload>0?[{name:'Faydalı yük',w:payload,qty:1,pm:false,cat:'other'}]:[]);
+      const baseMass = baseRows.reduce((a,c)=>a+c.w*c.qty,0);
+      const cda = sz==='micro'?0.004:sz==='small'?0.008:sz==='fpv'?0.012:sz==='lr'?0.03:0.07;
+      for (const pr of props.filter(p=>p.spec.d<=maxP*1.04 && p.spec.d>=maxP*0.6)){
+        const prop={d:pr.spec.d,p:pr.spec.p,b:pr.spec.b,ct:'',cp:''};
+        for (const mo of motors){
+          const brushed = RE.brushed.test(mo.name) && !RE.brushless.test(mo.name);
+          const motorMass=(mo.w+pr.w)*N;
+          if (baseMass+motorMass > auwMax){ reasons.weight++; continue; }
+          for (const cells of cellsList){
+            if (brushed && cells > (/7[,.]4 ?V|2s/i.test(mo.name)?2:1)) continue;
+            const hint=mo.name.match(/\((\d+)S\)/i); if (hint && cells>+hint[1]) continue;
+            // 1) Ön eleme: tam gazda motor + pervane
+            S={motorCount:N, components:[], motor:{...mo.spec}, prop, bat:{chem:'lipo',cells,cap:1000,crate:100,rint:0.02,esc:999,avA:0,usable:80}, env}; derive();
+            const mp=motorPoint(C.Voc*0.97); tried++; await tick();
+            const mach=mp.rpm/60*Math.PI*C.D/343, load=mp.rpm/Math.max(1,mo.spec.kv*C.Voc*0.97);
+            if (mp.I>mo.spec.imax*1.25 || load<0.5 || mach>0.8){ reasons.current++; continue; }
+            const Tg=mp.T*N/G*1000;
+            if (Tg < (baseMass+motorMass)*use.tw*0.9){ reasons.thrust++; continue; }
+            for (const bt of bats.filter(b=>b.spec.cells===cells)){
+              const est=baseMass+motorMass+bt.w;
+              if (est > auwMax || bt.w > 0.5*est){ reasons.weight++; continue; }
+              if (Tg < est*use.tw*0.95){ reasons.thrust++; continue; }
+              // 2) Yaklaşık değerlendirme (eğri örnekleme)
+              S={motorCount:N, components:[], motor:{...mo.spec}, prop, bat:{chem:bt.spec.chem,cells,cap:bt.spec.cap,crate:bt.spec.crate,rint:bt.spec.rint,esc:999,avA:szi.avA,usable:80}, env:{...env,cda}}; derive();
+              const curve=dzCurve(), full=curve[curve.length-1]; await tick();
+              const esc=dzPickEsc(N, brushed, cells, full.Im*full.d, mo.spec.imax, fcMount);
+              if (!esc){ reasons.current++; continue; }
+              const mass=est+esc.wTot;
+              if (mass > auwMax){ reasons.weight++; continue; }
+              const tw=full.Ttot/(mass/1000*G);
+              if (tw<use.tw){ reasons.thrust++; continue; }
+              if (full.Ib > bt.spec.cap/1000*bt.spec.crate){ reasons.battery++; continue; }
+              const hv=dzHoverFromCurve(curve, mass/1000*G);
+              if (!hv || hv.d>use.hover){ reasons.hover++; continue; }
+              const tmin=(bt.spec.cap/1000*0.8)/hv.Ib*60;
+              const r={tw, tmin, mass, fr, mo, pr, bt, esc, N, prop, cda, baseRows, brushed};
+              r.score=use.score(r)+(tmin>=minTime?1000:0);
+              cands.push(r);
+            }
+          }
+        }
+      }
+    }
+    // 3) En iyi adayları tam modelle doğrula, uyumluluğu denetle, çeşitliliği koru
+    cands.sort((a,b)=>b.score-a.score);
+    const out=[]; let checked=0;
+    for (const c of cands){
+      if (out.length===3 || checked>=60) break;
+      if (out.some(o=>(o.motor===c.mo.name&&o.prop===c.pr.name)||(o.motor===c.mo.name&&o.bat===c.bt.name))) continue;
+      checked++;
+      const rows=[...c.baseRows,{name:c.mo.name,w:c.mo.w,qty:c.N,pm:true,cat:'motor'},{name:c.pr.name,w:c.pr.w,qty:c.N,pm:true,cat:'prop'},
+        {name:c.bt.name,w:c.bt.w,qty:1,pm:false,cat:'battery'},{name:c.esc.it.name,w:c.esc.it.w,qty:c.esc.pm?c.N:1,pm:c.esc.pm,cat:'esc'}];
+      S={motorCount:c.N, components:rows, motor:{...c.mo.spec}, prop:{...c.prop},
+         bat:{chem:c.bt.spec.chem,cells:c.bt.spec.cells,cap:c.bt.spec.cap,crate:c.bt.spec.crate,rint:c.bt.spec.rint,esc:c.esc.it.spec.esc,avA:S.bat.avA,usable:80}, env:{...env,cda:c.cda}};
+      S.bat.avA=DZ_SIZES[sizeOf(FRAME_INFO[c.fr.name][0])].avA; derive();
+      const full=operate(1), hov=hoverAt(C.Voc), W=C.massKg*G; await tick();
+      if (!hov || hov.d>use.hover+0.02 || full.Ttot/W<use.tw*0.98){ reasons.hover++; continue; }
+      const ce=compatEval(S,{full,checks:[]});
+      if (ce.items.some(x=>x.l==='bd')){ reasons.compat++; continue; }
+      const tmin=(c.bt.spec.cap/1000*0.8)/hov.Ib*60;
+      out.push({tw:full.Ttot/W, tmin, hover:hov.d, mass:C.massKg*1000, warns:ce.items.filter(x=>x.l==='wn').length,
+        frame:c.fr.name, motor:c.mo.name, prop:c.pr.name, bat:c.bt.name, esc:c.esc.it.name, escQty:c.esc.pm?c.N:1,
+        meetsTime:tmin>=minTime, state:JSON.parse(JSON.stringify(S))});
+    }
+    if (out.some(o=>!o.meetsTime)) reasons.time++;
+    return {results:out, tried, found:cands.length, reasons};
+  } finally { S=saved; derive(); }
+}
+
+/* ---- Tarayıcı tarafı: panel ---- */
+const DZ = {goal:{size:'fpv', use:'general', n:4, minTime:0, payload:0, chem:'any', elec:'auto'}, res:null, busy:false, lastFocus:null};
+function dzOpen(){
+  DZ.lastFocus=document.activeElement;
+  if (S && S.components.some(c=>c.cat==='prop')){ const k=sizeOf(S.prop.d); DZ.goal.size=k; DZ.goal.n=[4,6,8].includes(S.motorCount)?S.motorCount:4; }
+  dzRender(); $('dzDoc').hidden=false; $('dzBack').hidden=false; document.body.classList.add('noscroll');
+  requestAnimationFrame(()=>{ $('dzDoc').classList.add('open'); $('dzBack').classList.add('open'); $('dzClose').focus(); });
+}
+function dzClose(){ $('dzDoc').classList.remove('open'); $('dzBack').classList.remove('open'); document.body.classList.remove('noscroll');
+  setTimeout(()=>{ $('dzDoc').hidden=true; $('dzBack').hidden=true; },220); if (DZ.lastFocus) DZ.lastFocus.focus(); }
+const dzChips=(key,opts)=>`<div class="dz-chips" role="group" data-k="${key}">${opts.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${String(DZ.goal[key])===String(v)}">${esc(l)}</button>`).join('')}</div>`;
+function dzRender(){
+  const g=DZ.goal, L=LANG==='en'?'en':'tr', hasMine=S&&S.components.some(c=>c.cat==='fc');
+  if (!hasMine && g.elec==='mine') g.elec='auto';
+  $('dzTitle').textContent=tl('Akıllı tasarımcı','Smart designer');
+  $('dzBody').innerHTML=`
+    <p class="lead">${esc(tl('Ne istediğini söyle; HoverLab katalogdaki parçaları fizik modeliyle tarayıp en uygun 3 drone\'u kursun.','Tell us what you want; HoverLab scans the catalog with its physics model and builds the 3 best drones.'))}</p>
+    <form id="dzForm" class="dz-form">
+      <span class="lbl">${esc(tl('Boyut (pervane)','Size (propeller)'))}</span>
+      ${dzChips('size',Object.entries(DZ_SIZES).map(([k,v])=>[k,v[L]]))}
+      <span class="lbl">${esc(tl('Ne için kullanacaksın?','What will you use it for?'))}</span>
+      ${dzChips('use',Object.entries(DZ_USES).map(([k,v])=>[k,v[L]]))}
+      <span class="lbl">${esc(tl('Motor sayısı','Motor count'))}</span>
+      ${dzChips('n',[[4,'4'],[6,'6'],[8,'8']])}
+      <div class="dz-row">
+        <label class="field"><span class="lbl">${esc(tl('En az uçuş süresi (dk)','Minimum flight time (min)'))}</span><input type="number" id="dzTime" min="0" max="120" step="1" value="${g.minTime}"></label>
+        <label class="field"><span class="lbl">${esc(tl('Ek yük (g)','Extra payload (g)'))}</span><input type="number" id="dzPay" min="0" max="20000" step="10" value="${g.payload}"></label>
+      </div>
+      <span class="lbl">${esc(tl('Batarya','Battery'))}</span>
+      ${dzChips('chem',[['any',tl('Fark etmez','Any')],['lipo','LiPo'],['liion','Li-ion']])}
+      <span class="lbl">${esc(tl('Elektronik (kontrolcü, alıcı, kamera…)','Electronics (controller, receiver, camera…)'))}</span>
+      ${dzChips('elec',[['auto',tl('Boyuta göre öner','Suggest by size')]].concat(hasMine?[['mine',tl('Şu anki tasarımımdakiler','From my current design')]]:[]))}
+      <button class="btn primary dz-go" type="submit">${esc(tl('Tasarla','Design it'))}</button>
+    </form>
+    <div id="dzOut" aria-live="polite"></div>`;
+  $('dzBody').querySelectorAll('.dz-chips').forEach(box=>box.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return;
+    const k=box.dataset.k; DZ.goal[k]= k==='n' ? +b.dataset.v : b.dataset.v; box.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b)); }));
+  $('dzForm').addEventListener('submit',dzRun);
+  if (DZ.res) dzShow();
+}
+async function dzRun(e){
+  e.preventDefault(); if (DZ.busy) return;
+  DZ.goal.minTime=Math.max(0,parseFloat($('dzTime').value)||0); DZ.goal.payload=Math.max(0,parseFloat($('dzPay').value)||0);
+  DZ.busy=true; document.body.classList.add('dz-busy'); const out=$('dzOut'), btn=document.querySelector('.dz-go'); btn.disabled=true;
+  out.innerHTML=`<div class="dz-prog"><span></span></div><p class="hint">${esc(tl('Kombinasyonlar deneniyor…','Trying combinations…'))}</p>`;
+  const bar=out.querySelector('.dz-prog span'); let p=0;
+  try{
+    DZ.res = await designSearch(DZ.goal, {base:S, onProgress:()=>{ p=Math.min(95,p+1.5); bar.style.width=p+'%'; }});
+    dzShow();
+  }catch(err){ console.error(err); out.innerHTML=`<p class="hint">${esc(tl('Bir hata oluştu.','Something went wrong.'))}</p>`; }
+  DZ.busy=false; document.body.classList.remove('dz-busy'); btn.disabled=false;
+}
+const DZ_REASON = {
+  size:   ()=>tl('Bu boyut ve motor sayısında katalogda gövde yok.','No frame in the catalog for this size and motor count.'),
+  thrust: ()=>tl('İtki yetmiyor: ek yükü azalt ya da kullanım amacını "Uzun uçuş"a çek.','Not enough thrust: reduce the payload or switch the use to "Long flights".'),
+  hover:  ()=>tl('Askıda kalma gazı çok yüksek çıkıyor; daha büyük boyut dene.','Hover throttle comes out too high; try a larger size.'),
+  current:()=>tl('Motorlar aşırı akım çekiyor; daha büyük boyut ya da daha düşük uçuş hedefi dene.','Motors draw too much current; try a larger size or a lower target.'),
+  battery:()=>tl('Bataryalar bu akımı veremiyor (C değeri yetersiz).','Batteries can\'t deliver this current (C rating too low).'),
+  compat: ()=>tl('Parça uyumsuzluğu çıkıyor.','Parts turn out incompatible.'),
+  weight: ()=>tl('Bu boyuttaki gövdeler bu kadar ağırlığı taşıyamaz: ek yükü azalt ya da daha büyük boyut seç.','Frames of this size can\'t carry that much weight: reduce the payload or pick a larger size.'),
+  time:   ()=>tl('İstenen uçuş süresine ulaşılamıyor; en yakın sonuçlar gösteriliyor.','The target flight time can\'t be reached; showing the closest results.'),
+};
+function dzShow(){
+  const out=$('dzOut'), r=DZ.res; if (!out||!r) return;
+  if (!r.results.length){
+    const top=Object.entries(r.reasons).filter(([k])=>k!=='time').sort((a,b)=>b[1]-a[1])[0];
+    out.innerHTML=`<div class="dz-none"><b>${esc(tl('Bu hedefe uyan tasarım bulunamadı.','No design matches this goal.'))}</b><p>${esc(r.noFrame?DZ_REASON.size():(DZ_REASON[top&&top[1]?top[0]:'thrust']||DZ_REASON.thrust)())}</p></div>`;
+    return;
+  }
+  const best={t:Math.max(...r.results.map(x=>x.tmin)), w:Math.max(...r.results.map(x=>x.tw)), m:Math.min(...r.results.map(x=>x.mass))};
+  const nm=s=>LANG==='en'?trName(s).replace(/(\d),(\d)/g,'$1.$2'):s;
+  out.innerHTML = (r.results.some(x=>!x.meetsTime)?`<p class="dz-note">${esc(DZ_REASON.time())}</p>`:'') + r.results.map((x,i)=>{
+    const tags=[]; if (x.tmin===best.t) tags.push(tl('En uzun uçuş','Longest flight')); if (x.tw===best.w) tags.push(tl('En güçlü','Most powerful')); if (x.mass===best.m) tags.push(tl('En hafif','Lightest'));
+    return `<article class="dz-card">
+      <header><span class="dz-rank">${i+1}</span><div>${tags.map(t=>`<span class="pill ok">${esc(t)}</span>`).join(' ')}</div></header>
+      <div class="dz-kpi">
+        <div><b>${fmt(x.tmin,1)}</b><small>${esc(tl('dk uçuş','min flight'))}</small></div>
+        <div><b>${fmt(x.tw,1)}</b><small>${esc(tl('itki/ağırlık','thrust/weight'))}</small></div>
+        <div><b>${fmt(x.mass)}</b><small>g</small></div>
+        <div><b>${LANG==='en'?fmt(x.hover*100)+'%':'%'+fmt(x.hover*100)}</b><small>${esc(tl('hover gazı','hover throttle'))}</small></div>
+      </div>
+      <ul class="dz-parts">
+        <li><span>${esc(tl('Gövde','Frame'))}</span>${esc(nm(x.frame))}</li>
+        <li><span>${esc(tl('Motor','Motor'))}</span>${x.state.motorCount} × ${esc(nm(x.motor))}</li>
+        <li><span>${esc(tl('Pervane','Prop'))}</span>${x.state.motorCount} × ${esc(nm(x.prop))}</li>
+        <li><span>${esc(tl('Batarya','Battery'))}</span>${esc(nm(x.bat))}</li>
+        <li><span>ESC</span>${x.escQty>1?x.escQty+' × ':''}${esc(nm(x.esc))}</li>
+      </ul>
+      ${x.warns?`<p class="hint">${esc(tl(`${x.warns} küçük uyarı var; yükleyince Uygunluk panelinde görünür.`,`${x.warns} minor warning(s); you'll see them in the Compatibility panel after loading.`))}</p>`:''}
+      <div class="row"><button class="btn primary" type="button" data-load="${i}">${esc(tl('Bu tasarımı yükle','Load this design'))}</button><button class="btn" type="button" data-dzcmp="${i}">${esc(tl('Karşılaştırmaya ekle','Add to comparison'))}</button></div>
+    </article>`; }).join('') + (r.results.length>1&&typeof cmpAdd==='function'?`<button class="btn dz-cmpall" type="button" id="dzCmpAll">${esc(tl(`Bu ${r.results.length} öneriyi karşılaştır`,`Compare these ${r.results.length} suggestions`))}</button>`:'') + `<p class="fine">${esc(tl(`${fmt(r.tried)} motor–pervane–gerilim eşleşmesi denendi, ${fmt(r.found)} uygun tasarım bulundu. Sonuçlar fizik modeline dayalı tahminlerdir; parçaları almadan önce üretici verisiyle doğrula.`,
+      `${fmt(r.tried)} motor–prop–voltage pairings tried, ${fmt(r.found)} valid designs found. Results are model estimates; verify with maker data before buying parts.`))}</p>`;
+  const dzName=(x,i)=>tl(`Öneri ${i+1}`,`Suggestion ${i+1}`)+' · '+(LANG==='en'?trName(x.motor):x.motor).split(' ')[0]+' · '+x.state.bat.cells+'S '+fmt(x.state.bat.cap)+' mAh';
+  out.querySelectorAll('[data-dzcmp]').forEach(b=>b.addEventListener('click',()=>{ const i=+b.dataset.dzcmp; cmpAdd(dzName(r.results[i],i), r.results[i].state); b.textContent=tl('Eklendi ✓','Added ✓'); b.disabled=true; }));
+  const ca=$('dzCmpAll'); if (ca) ca.addEventListener('click',()=>{ CMP.list=[]; r.results.forEach((x,i)=>cmpAdd(dzName(x,i), x.state)); dzClose(); setTimeout(cmpOpen,250); });
+  out.querySelectorAll('[data-load]').forEach(b=>b.addEventListener('click',()=>{ const x=r.results[+b.dataset.load];
+    if (applyState({...x.state, preset:null})){ dzClose(); setTab('tGovde'); document.getElementById('tasarim').scrollIntoView({behavior:'smooth'});
+      stageNote(tl('Akıllı tasarımcının önerisi yüklendi. Parçaları ve ağırlıkları dilediğin gibi değiştirebilirsin.','The smart designer\'s suggestion is loaded. Change parts and weights as you like.')); } }));
+}
+if (typeof document!=='undefined' && document.getElementById('dzDoc')){
+  document.querySelectorAll('[data-open-dz]').forEach(b=>b.addEventListener('click',dzOpen));
+  $('dzClose').addEventListener('click',dzClose); $('dzBack').addEventListener('click',dzClose);
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('dzDoc').hidden) dzClose(); });
+}
+function dzLang(){ if (!$('dzDoc').hidden) dzRender(); }
+</script>
+<script>
+/* HoverLab · report.js
+ * Dışa aktarma: yazdırılabilir rapor (tarayıcının "PDF olarak kaydet" seçeneğiyle PDF olur) ve CSV parça listesi.
+ * Proje raporlarına (okul, TEKNOFEST vb.) doğrudan eklenebilecek biçimde hazırlanır. İki dilde: tl('Türkçe','English').
+ * © 2026 HoverLab. Tüm hakları saklıdır. */
+'use strict';
+
+const pct = v => LANG==='en' ? `${fmt(v)}%` : `%${fmt(v)}`;
+const enNum = s => LANG==='en' ? String(s).replace(/(\d),(\d)/g,'$1.$2') : s;
+const rpName = c => LANG==='en' ? enNum(trName(c.name)) : c.name;
+const rpNum = (v,d=0) => (isFinite(v)?v:0).toLocaleString(locale(),{minimumFractionDigits:d,maximumFractionDigits:d,useGrouping:false});
+function rpRows(){
+  return S.components.map(c=>{ const q=compQty(c); return {cat:tt(CAT[c.cat]||'Diğer'), name:rpName(c), qty:q, w:c.w||0, tot:(c.w||0)*q}; });
+}
+function rpSummary(){
+  const {full,hov,TW,mG}=R, items=[
+    [tl('Kalkış ağırlığı','Takeoff weight'), `${fmt(mG)} g`],
+    [tl('Motor sayısı','Motor count'), String(S.motorCount)],
+    [tl('Maks. itki','Max thrust'), `${fmt(full.Ttot/G*1000)} g`],
+    [tl('İtki/ağırlık','Thrust-to-weight'), mG>0?fmt(TW,2):'—'],
+    [tl('Hover gazı','Hover throttle'), hov?pct(hov.d*100):'—'],
+    [tl('Hover uçuş süresi','Hover flight time'), hov&&R.tmin?`${fmt(R.tmin,1)} ${tl('dk','min')}`:'—'],
+    [tl('Hover akımı','Hover current'), hov?`${fmt(hov.Ib,1)} A`:'—'],
+    [tl('Tam gaz akımı','Full-throttle current'), `${fmt(full.Ib,1)} A`],
+    [tl('Motor','Motor'), `${fmt(S.motor.kv)} KV · Rm ${fmt(S.motor.rm,3)} Ω · I₀ ${fmt(S.motor.i0,2)} A · ${fmt(S.motor.imax)} A`],
+    [tl('Pervane','Propeller'), `${fmt(S.prop.d,1)}×${fmt(S.prop.p,1)}″ · ${S.prop.b} ${tl('kanat','blades')}`],
+    [tl('Batarya','Battery'), `${S.bat.cells}S ${S.bat.chem==='liion'?'Li-ion':'LiPo'} · ${fmt(S.bat.cap)} mAh · ${fmt(S.bat.crate)}C`],
+    [tl('ESC sınırı','ESC limit'), `${fmt(S.bat.esc,1)} A`],
+    [tl('Ortam','Environment'), `${fmt(S.env.alt)} m · ${fmt(S.env.temp)} °C · ρ ${fmt(C.rho,3)} kg/m³`],
+  ];
+  return items;
+}
+
+/* ---- CSV ---- */
+function exportCsv(){
+  const sep = LANG==='en' ? ',' : ';';
+  const q = v => { v=String(v); return /[",;\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; };
+  const lines=[[tl('Kategori','Category'),tl('Parça','Part'),tl('Adet','Qty'),tl('Birim ağırlık (g)','Unit weight (g)'),tl('Toplam (g)','Total (g)')].map(q).join(sep)];
+  rpRows().forEach(r=>lines.push([r.cat,r.name,r.qty,rpNum(r.w,1),rpNum(r.tot,1)].map(q).join(sep)));
+  lines.push(['',tl('Toplam','Total'),'','',rpNum(R.mG,1)].map(q).join(sep), '');
+  rpSummary().forEach(([k,v])=>lines.push([q(k),q(v)].join(sep)));
+  const blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  rpDownload(blob, rpFile('csv'));
+  rpMsg(tl('CSV indirildi. Excel ya da Google E-Tablolar ile açabilirsin.','CSV downloaded. Open it with Excel or Google Sheets.'));
+}
+function rpFile(ext){ const d=new Date(), p=n=>String(n).padStart(2,'0'); return `hoverlab-${tl('tasarim','design')}-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}.${ext}`; }
+function rpDownload(blob, name){ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1000); }
+let rpT=null; function rpMsg(m){ const e=$('rpMsg'); if(!e) return; e.textContent=m; clearTimeout(rpT); rpT=setTimeout(()=>e.textContent='',5000); }
+
+/* ---- Yazdırılabilir rapor (PDF) ---- */
+function reportHtml(){
+  const ce = typeof compatEval==='function' ? compatEval(S,{full:R.full, checks:R.checks}) : null;
+  const lvl = ce && !ce.empty ? LEVEL_TXT[ce.level]() : null;
+  let chart=''; try{ chart=$('chart').toDataURL('image/png'); }catch(e){}
+  const rows=rpRows(), d=new Date().toLocaleDateString(locale(),{day:'numeric',month:'long',year:'numeric'});
+  const checks=(R.checks||[]).map(x=>({l:x.l,t:tt(x.t),m:tt(x.m)}));
+  const ic={bd:'×',wn:'!',ok:'✓',i:'i'};
+  const opRows=[[tl('Gaz','Throttle'),o=>pct(o.d*100)],[tl('Devir','RPM'),o=>`${fmt(o.rpm)} rpm`],[tl('İtki / motor','Thrust / motor'),o=>`${fmt(o.Tm/G*1000)} g`],
+    [tl('Toplam itki','Total thrust'),o=>`${fmt(o.Ttot/G*1000)} g`],[tl('Batarya akımı','Battery current'),o=>`${fmt(o.Ib,1)} A`],[tl('Güç','Power'),o=>`${fmt(o.Pbat)} W`]];
+  const cols=[R.hov,R.half,R.full];
+  return `<!doctype html><html lang="${LANG}"><head><meta charset="utf-8"><title>HoverLab · ${esc(tl('Tasarım raporu','Design report'))}</title>
+<style>
+  @page{size:A4;margin:16mm 14mm}
+  *{box-sizing:border-box} body{font:11pt/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#1d1320;margin:0;padding:18px}
+  h1{font-size:20pt;margin:0} h2{font-size:12.5pt;margin:18px 0 6px;padding-bottom:4px;border-bottom:2px solid #E63946;break-after:avoid}
+  .top{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid #ddd;padding-bottom:8px}
+  .brand{color:#E63946;font-weight:800} .muted{color:#6b5d6e;font-size:9.5pt}
+  table{width:100%;border-collapse:collapse;font-size:10pt;break-inside:avoid} th,td{padding:5px 6px;border-bottom:1px solid #e6dfe7;text-align:left;vertical-align:top}
+  th{background:#faf3f5;font-weight:700} td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap} tfoot td{font-weight:700;border-top:2px solid #1d1320}
+  .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px} .kpi div{border:1px solid #e6dfe7;border-radius:8px;padding:8px}
+  .kpi b{display:block;font-size:15pt} .kpi small{color:#6b5d6e}
+  ul.ck{list-style:none;padding:0;margin:0} ul.ck li{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid #eee;break-inside:avoid}
+  .ic{flex:none;width:18px;height:18px;border-radius:50%;display:inline-grid;place-items:center;font-size:9pt;font-weight:800;color:#fff}
+  .ic.ok{background:#2B9348}.ic.wn{background:#C27C0E}.ic.bd{background:#A4161A}.ic.i{background:#11A39A}
+  .chart{width:100%;border:1px solid #e6dfe7;border-radius:8px} .note{font-size:9pt;color:#6b5d6e;margin-top:16px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media print{body{padding:0} .noprint{display:none}}
+  .noprint{position:sticky;top:0;background:#fff;padding:8px 0;margin-bottom:8px;border-bottom:1px solid #eee}
+  .noprint button{font:inherit;padding:7px 14px;border-radius:999px;border:0;background:#E63946;color:#fff;font-weight:700;cursor:pointer}
+</style></head><body>
+<div class="noprint"><button onclick="print()">${esc(tl('Yazdır / PDF olarak kaydet','Print / save as PDF'))}</button> <span class="muted">${esc(tl('Yazdırma penceresinde hedef olarak "PDF olarak kaydet"i seç.','In the print dialog choose "Save as PDF" as the destination.'))}</span></div>
+<div class="top"><div><div class="brand">HoverLab</div><h1>${esc(tl('Drone tasarım raporu','Drone design report'))}</h1></div><div class="muted">${esc(d)}</div></div>
+<div class="kpi">
+  <div><b>${fmt(R.mG)} g</b><small>${esc(tl('kalkış ağırlığı','takeoff weight'))}</small></div>
+  <div><b>${R.mG>0?fmt(R.TW,2):'—'}</b><small>${esc(tl('itki/ağırlık','thrust/weight'))}</small></div>
+  <div><b>${R.hov?pct(R.hov.d*100):'—'}</b><small>${esc(tl('hover gazı','hover throttle'))}</small></div>
+  <div><b>${R.hov&&R.tmin?fmt(R.tmin,1)+' '+tl('dk','min'):'—'}</b><small>${esc(tl('hover uçuş süresi','hover flight time'))}</small></div>
+</div>
+<h2>${esc(tl('Parça listesi','Parts list'))}</h2>
+<table><thead><tr><th>${esc(tl('Kategori','Category'))}</th><th>${esc(tl('Parça','Part'))}</th><th class="n">${esc(tl('Adet','Qty'))}</th><th class="n">${esc(tl('Birim (g)','Unit (g)'))}</th><th class="n">${esc(tl('Toplam (g)','Total (g)'))}</th></tr></thead>
+<tbody>${rows.map(r=>`<tr><td>${esc(r.cat)}</td><td>${esc(r.name)}</td><td class="n">${r.qty}</td><td class="n">${fmt(r.w,r.w%1?1:0)}</td><td class="n">${fmt(r.tot,r.tot%1?1:0)}</td></tr>`).join('')}</tbody>
+<tfoot><tr><td></td><td>${esc(tl('Toplam','Total'))}</td><td></td><td></td><td class="n">${fmt(R.mG)} g</td></tr></tfoot></table>
+<div class="grid2">
+<div><h2>${esc(tl('Teknik değerler','Specifications'))}</h2><table><tbody>${rpSummary().map(([k,v])=>`<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join('')}</tbody></table></div>
+<div><h2>${esc(tl('Çalışma noktaları','Operating points'))}</h2><table><thead><tr><th></th><th class="n">Hover</th><th class="n">${pct(50)}</th><th class="n">${esc(tl('Tam gaz','Full'))}</th></tr></thead>
+<tbody>${opRows.map(([k,f])=>`<tr><th>${esc(k)}</th>${cols.map(o=>`<td class="n">${o?esc(f(o)):'—'}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+</div>
+${chart?`<h2>${esc(tl('Gaz – itki ve akım eğrisi','Throttle – thrust and current curve'))}</h2><img class="chart" src="${chart}" alt="">`:''}
+<h2>${esc(tl('Kontroller','Checks'))}</h2>
+<ul class="ck">${checks.map(x=>`<li><span class="ic ${x.l}">${ic[x.l]}</span><div><b>${esc(x.t)}</b><br><span class="muted">${esc(x.m)}</span></div></li>`).join('')}</ul>
+${ce&&!ce.empty?`<h2>${esc(tl('Uygunluk ve uçuş riski','Compatibility & flight risk'))}</h2>
+<p><b>${esc(lvl[0])}</b>${ce.level==='missing'?'':` · ${esc(tl('Risk puanı','Risk score'))} ${ce.score}/100`} — ${esc(lvl[1])}</p>
+<ul class="ck">${ce.items.map(x=>`<li><span class="ic ${x.l}">${ic[x.l]}</span><div>${x.pair?`<span class="muted">${esc(x.pair)}</span><br>`:''}<b>${esc(x.t)}</b><br><span class="muted">${esc(x.m)}</span></div></li>`).join('')}</ul>`:''}
+<p class="note">${esc(tl('Bu rapor HoverLab ile oluşturuldu. Değerler fiziksel modele dayalı tahminlerdir (statik itki, sabit hover); katalog ağırlıkları tipik değerlerdir. Parça seçmeden önce üretici verileriyle doğrulayın.',
+  'Generated with HoverLab. Values are estimates from a physical model (static thrust, steady hover); catalog weights are typical values. Verify with manufacturer data before choosing parts.'))}</p>
+</body></html>`;
+}
+function exportPdf(){
+  if (!S.components.length) return rpMsg(tl('Önce tasarıma parça ekle.','Add parts to the design first.'));
+  const html=reportHtml(), w=window.open('','_blank');
+  if (w && w.document){ w.document.open(); w.document.write(html); w.document.close(); w.focus(); setTimeout(()=>{ try{ w.print(); }catch(e){} },500);
+    rpMsg(tl('Rapor yeni sekmede açıldı; yazdırma penceresinde "PDF olarak kaydet"i seç.','The report opened in a new tab; choose "Save as PDF" in the print dialog.')); }
+  else { rpDownload(new Blob([html],{type:'text/html;charset=utf-8'}), rpFile('html'));
+    rpMsg(tl('Açılır pencere engellendi; rapor HTML olarak indirildi. Açıp yazdırarak PDF yapabilirsin.','Pop-up blocked; the report was downloaded as HTML. Open and print it to make a PDF.')); }
+}
+if (typeof document!=='undefined' && document.getElementById('rpPdf')){
+  $('rpPdf').addEventListener('click',exportPdf);
+  $('rpCsv').addEventListener('click',()=>{ if (!S.components.length) return rpMsg(tl('Önce tasarıma parça ekle.','Add parts to the design first.')); exportCsv(); });
+}
+</script>
+<script>
+/* HoverLab · compare.js
+ * Tasarım karşılaştırma: en fazla 3 tasarımı (şu anki tasarım, kayıtlı tasarımlar, akıllı tasarımcı önerileri) yan yana koyar;
+ * değerleri aynı fizik modeliyle hesaplar, her satırda en iyisini işaretler ve itki eğrilerini üst üste çizer.
+ * cmpEval() DOM kullanmaz. © 2026 HoverLab. Tüm hakları saklıdır. */
+'use strict';
+
+const CMP_KEY='hoverlab-compare', CMP_MAX=3;
+const CMP = { list:[], lastFocus:null, msg:'' };
+try{ const a=JSON.parse(localStorage.getItem(CMP_KEY)); if (Array.isArray(a)) CMP.list=a.filter(x=>x&&x.S&&x.name).slice(0,CMP_MAX); }catch(e){}
+const cmpSave = () => { try{ localStorage.setItem(CMP_KEY, JSON.stringify(CMP.list)); }catch(e){} };
+
+/* Bir tasarımın tüm değerlerini, kullanıcının açık tasarımına dokunmadan hesaplar */
+function cmpEval(st){
+  const s=sanitizeState(st); if (!s) return null;
+  const savedS=S, savedR=R;
+  try{
+    S=s; derive();
+    const full=operate(1), half=operate(0.5), hov=hoverAt(C.Voc), W=C.massKg*G, mG=C.massKg*1000, TW=W>0?full.Ttot/W:0;
+    R={full,half,hov,W,TW,mG};
+    const tmin = hov ? (S.bat.cap/1000*S.bat.usable/100)/hov.Ib*60 : 0; R.tmin=tmin;
+    const checks=checksList();
+    const ce=compatEval(S,{full,checks});
+    const curve=[]; for (let i=0;i<=20;i++) curve.push(operate(i/20).Ttot/G*1000);
+    const part=cat=>{ const c=S.components.find(x=>x.cat===cat); return c?c.name:'—'; };
+    return { mass:mG, thrust:full.Ttot/G*1000, tw:TW, hover:hov?hov.d:null, tmin, Ihov:hov?hov.Ib:null, Ifull:full.Ib,
+      gw: hov&&hov.Pbat>0 ? (hov.Ttot/G*1000)/hov.Pbat : 0, risk:ce.empty?null:ce.score, level:ce.level, missing:ce.missing||0,
+      n:S.motorCount, cells:S.bat.cells, cap:S.bat.cap, frame:part('frame'), motor:part('motor'), prop:part('prop'), bat:part('battery'), curve };
+  } finally { S=savedS; R=savedR; derive(); }
+}
+
+function cmpAdd(name, st){
+  const snap=JSON.parse(JSON.stringify(st)); delete snap.preset;
+  const key=JSON.stringify(snap);
+  if (CMP.list.some(x=>JSON.stringify(x.S)===key)){ CMP.msg=tl('Bu tasarım zaten karşılaştırmada.','This design is already in the comparison.'); cmpUpdate(); return false; }
+  let dropped=null;
+  if (CMP.list.length>=CMP_MAX) dropped=CMP.list.shift();
+  CMP.list.push({name:String(name).slice(0,40), S:snap}); cmpSave();
+  CMP.msg = dropped ? tl(`En fazla 3 tasarım; “${dropped.name}” çıkarıldı.`,`Up to 3 designs; “${dropped.name}” was removed.`) : tl(`“${name}” karşılaştırmaya eklendi.`,`“${name}” added to the comparison.`);
+  cmpUpdate(); return true;
+}
+function cmpCurrentName(){
+  const m=S.components.find(c=>c.cat==='motor'), b=S.components.find(c=>c.cat==='battery');
+  if (S.preset && PRESETS[S.preset]) return tt(PRESETS[S.preset].label);
+  const short = s => (LANG==='en'?trName(s):s).replace(/\s*\(.*?\)\s*/g,' ').trim().split(' ').slice(0,2).join(' ');
+  return m||b ? [m&&short(m.name), b&&`${S.bat.cells}S ${fmt(S.bat.cap)}`].filter(Boolean).join(' · ') : tl('Tasarımım','My design');
+}
+
+/* ---- Arayüz ---- */
+const CMP_COL=['--accent','--accent2','--sun'];
+function cmpUpdate(){
+  const n=CMP.list.length;
+  document.querySelectorAll('.cmp-count').forEach(e=>{ e.textContent=n?`(${n})`:''; });
+  const tray=$('cmpTray'); if (tray){ tray.hidden=!n; const t=tray.querySelector('span'); if (t) t.textContent=tl(`Karşılaştır (${n})`,`Compare (${n})`); }
+  if (!$('cmpDoc').hidden) cmpRender();
+  const m=$('rpMsg'); if (m && CMP.msg && $('cmpDoc').hidden){ m.textContent=CMP.msg; setTimeout(()=>{ if (m.textContent===CMP.msg) m.textContent=''; },4000); }
+}
+function cmpOpen(){ CMP.lastFocus=document.activeElement; cmpRender(); $('cmpDoc').hidden=false; $('cmpBack').hidden=false; document.body.classList.add('noscroll');
+  requestAnimationFrame(()=>{ $('cmpDoc').classList.add('open'); $('cmpBack').classList.add('open'); $('cmpClose').focus(); drawCmpChart(); }); }
+function cmpClose(){ $('cmpDoc').classList.remove('open'); $('cmpBack').classList.remove('open'); document.body.classList.remove('noscroll');
+  setTimeout(()=>{ $('cmpDoc').hidden=true; $('cmpBack').hidden=true; },220); if (CMP.lastFocus) CMP.lastFocus.focus(); }
+let CMP_EV=[];
+function cmpRender(){
+  $('cmpTitle').textContent=tl('Tasarım karşılaştırma','Design comparison');
+  const L=CMP.list; CMP_EV=L.map(x=>cmpEval(x.S));
+  const pct=v=>v==null?'—':(LANG==='en'?`${fmt(v*100)}%`:`%${fmt(v*100)}`);
+  const nm=s=>s==='—'?s:(LANG==='en'?trName(s).replace(/(\d),(\d)/g,'$1.$2'):s);
+  // [etiket, değer, biçim, en iyi: 'max' | 'min' | null]
+  const rows=[
+    [tl('Kalkış ağırlığı','Takeoff weight'), e=>e.mass, v=>`${fmt(v)} g`, 'min'],
+    [tl('Maks. itki','Max thrust'), e=>e.thrust, v=>`${fmt(v)} g`, 'max'],
+    [tl('İtki/ağırlık','Thrust-to-weight'), e=>e.tw, v=>fmt(v,2), 'max'],
+    [tl('Hover gazı','Hover throttle'), e=>e.hover, pct, 'min'],
+    [tl('Hover uçuş süresi','Hover flight time'), e=>e.hover?e.tmin:null, v=>v==null?'—':`${fmt(v,1)} ${tl('dk','min')}`, 'max'],
+    [tl('Hover verimi','Hover efficiency'), e=>e.gw||null, v=>v==null?'—':`${fmt(v,2)} g/W`, 'max'],
+    [tl('Hover akımı','Hover current'), e=>e.Ihov, v=>v==null?'—':`${fmt(v,1)} A`, 'min'],
+    [tl('Tam gaz akımı','Full-throttle current'), e=>e.Ifull, v=>`${fmt(v,1)} A`, null],
+    [tl('Risk puanı','Risk score'), e=>e.level==='missing'?null:e.risk, v=>v==null?'—':`${v}/100`, 'min'],
+  ];
+  const head = L.length ? `<tr><th><span class="sr">${esc(tl('Değer','Value'))}</span></th>${L.map((x,i)=>`<th><span class="cmp-dot" style="background:var(${CMP_COL[i]})"></span>${esc(x.name)}</th>`).join('')}</tr>` : '';
+  const body = rows.map(([lab,get,f,best])=>{
+    const vals=CMP_EV.map(e=>e?get(e):null), nums=vals.filter(v=>typeof v==='number');
+    const bv = best&&nums.length>1 ? (best==='max'?Math.max(...nums):Math.min(...nums)) : null;
+    return `<tr><th>${esc(lab)}</th>${vals.map(v=>`<td class="${bv!=null&&v===bv?'best':''}">${esc(f(v))}</td>`).join('')}</tr>`;
+  }).join('') + [['Gövde','Frame','frame'],['Motor','Motor','motor'],['Pervane','Prop','prop'],['Batarya','Battery','bat']].map(([t,en,k])=>
+    `<tr class="part"><th>${esc(tl(t,en))}</th>${CMP_EV.map((e,i)=>`<td>${esc(e?nm(e[k]):'—')}${k==='motor'&&e?` <small>× ${e.n}</small>`:''}</td>`).join('')}</tr>`).join('')
+    + `<tr class="cmp-acts"><th></th>${L.map((x,i)=>`<td><button class="btn sm primary" data-cload="${i}" type="button">${esc(tl('Aç','Open'))}</button> <button class="btn sm" data-cdel="${i}" type="button">${esc(tl('Çıkar','Remove'))}</button></td>`).join('')}</tr>`;
+  const verdict = cmpVerdict();
+  $('cmpBody').innerHTML = `
+    <div class="row cmp-top"><button class="btn" id="cmpAddCur" type="button">${esc(tl('+ Şu anki tasarımı ekle','+ Add current design'))}</button>${L.length?`<button class="linkbtn" id="cmpClear" type="button">${esc(tl('Hepsini temizle','Clear all'))}</button>`:''}</div>
+    <p class="cm-msg" role="status">${esc(CMP.msg||'')}</p>
+    ${L.length<2 ? `<div class="dz-none"><b>${esc(tl('Karşılaştırmak için en az 2 tasarım ekle.','Add at least 2 designs to compare.'))}</b><p>${esc(tl('Şu anki tasarımı buradan, kayıtlı tasarımlarını "Tasarımlarım" listesinden, önerileri de Akıllı tasarımcıdan ekleyebilirsin.','Add the current design here, saved ones from "My designs", and suggestions from the Smart designer.'))}</p></div>`:''}
+    ${L.length ? `<div class="tablewrap" tabindex="0" role="region" aria-label="${esc(tl('Karşılaştırma tablosu','Comparison table'))}"><table class="cmp-table">${head}${body}</table></div>
+      ${verdict?`<p class="cmp-verdict">${esc(verdict)}</p>`:''}
+      <h3>${esc(tl('Gaz – toplam itki','Throttle – total thrust'))}</h3>
+      <canvas id="cmpChart" class="cmp-chart" aria-label="${esc(tl('İtki eğrileri','Thrust curves'))}"></canvas>
+      <p class="hint">${esc(tl('Kesik çizgiler her tasarımın ağırlığıdır; eğrinin bu çizgiyi kestiği yer hover gazıdır.','Dashed lines are each design\'s weight; where a curve crosses its line is the hover throttle.'))}</p>` : ''}`;
+  CMP.msg='';
+  $('cmpAddCur').addEventListener('click',()=>{ if (!S.components.length){ CMP.msg=tl('Önce tasarıma parça ekle.','Add parts to the design first.'); cmpRender(); return; } cmpAdd(cmpCurrentName(), S); drawCmpChart(); });
+  const cl=$('cmpClear'); if (cl) cl.addEventListener('click',()=>{ CMP.list=[]; cmpSave(); cmpUpdate(); });
+  $('cmpBody').querySelectorAll('[data-cload]').forEach(b=>b.addEventListener('click',()=>{ const x=CMP.list[+b.dataset.cload];
+    if (applyState({...x.S, preset:null})){ cmpClose(); setTab('tGovde'); document.getElementById('tasarim').scrollIntoView({behavior:'smooth'}); stageNote(tl(`“${x.name}” açıldı.`,`“${x.name}” opened.`)); } }));
+  $('cmpBody').querySelectorAll('[data-cdel]').forEach(b=>b.addEventListener('click',()=>{ CMP.list.splice(+b.dataset.cdel,1); cmpSave(); cmpUpdate(); drawCmpChart(); }));
+  drawCmpChart();
+}
+// Kısa yorum: hangisi neden öne çıkıyor
+function cmpVerdict(){
+  const E=CMP_EV.map((e,i)=>e&&{...e,name:CMP.list[i].name}).filter(Boolean); if (E.length<2) return '';
+  const ok=E.filter(e=>e.hover!=null && e.level!=='missing');
+  if (!ok.length) return tl('Hiçbiri askıda kalamıyor ya da parçası eksik.','None of them can hover or all have missing parts.');
+  const longest=ok.reduce((a,b)=>b.tmin>a.tmin?b:a), strongest=ok.reduce((a,b)=>b.tw>a.tw?b:a), safest=ok.reduce((a,b)=>(b.risk??99)<(a.risk??99)?b:a);
+  const parts=[tl(`En uzun uçan: ${longest.name} (${fmt(longest.tmin,1)} dk).`,`Longest flight: ${longest.name} (${fmt(longest.tmin,1)} min).`),
+    tl(`En güçlü: ${strongest.name} (itki/ağırlık ${fmt(strongest.tw,1)}).`,`Most powerful: ${strongest.name} (thrust/weight ${fmt(strongest.tw,1)}).`)];
+  if (safest.risk!=null) parts.push(tl(`En düşük risk: ${safest.name} (${safest.risk}/100).`,`Lowest risk: ${safest.name} (${safest.risk}/100).`));
+  return parts.join(' ');
+}
+function drawCmpChart(){
+  const cv=$('cmpChart'); if (!cv || !CMP_EV.length) return;
+  const {ctx,w,h}=setupCanvas(cv); if (w<10) return;
+  const ink=cssVar('--ink'), muted=cssVar('--muted'), line=cssVar('--line');
+  ctx.clearRect(0,0,w,h);
+  const E=CMP_EV.filter(Boolean); if (!E.length) return;
+  const maxT=niceMax(Math.max(...E.map(e=>Math.max(e.curve[20],e.mass)))*1.05);
+  const L=50,Rr=12,T=10,B=26,pw=w-L-Rr,ph=h-T-B, X=x=>L+x*pw, Y=v=>T+ph-v/maxT*ph;
+  ctx.font='11px "IBM Plex Mono", monospace'; ctx.lineWidth=1;
+  for (let k=0;k<=4;k++){ const y=T+ph*k/4; ctx.strokeStyle=line; ctx.beginPath(); ctx.moveTo(L,y); ctx.lineTo(L+pw,y); ctx.stroke();
+    ctx.fillStyle=muted; ctx.textAlign='right'; ctx.textBaseline='middle'; ctx.fillText(fmt(maxT*(1-k/4)),L-8,y); }
+  ctx.textAlign='center'; ctx.textBaseline='top'; for (let k=0;k<=4;k++) ctx.fillText((k*25)+'%',X(k/4),T+ph+8);
+  CMP_EV.forEach((e,i)=>{ if(!e) return; const col=cssVar(CMP_COL[i]);
+    ctx.strokeStyle=col; ctx.lineWidth=2.5; ctx.beginPath(); e.curve.forEach((v,j)=>j?ctx.lineTo(X(j/20),Y(v)):ctx.moveTo(X(0),Y(v))); ctx.stroke();
+    ctx.setLineDash([5,4]); ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(L,Y(e.mass)); ctx.lineTo(L+pw,Y(e.mass)); ctx.stroke(); ctx.setLineDash([]);
+    if (e.hover!=null){ ctx.fillStyle=cssVar('--surface'); ctx.strokeStyle=col; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(X(e.hover),Y(e.mass),4.5,0,7); ctx.fill(); ctx.stroke(); }
+  });
+}
+if (typeof document!=='undefined' && document.getElementById('cmpDoc')){
+  document.querySelectorAll('[data-open-cmp]').forEach(b=>b.addEventListener('click',cmpOpen));
+  $('cmpClose').addEventListener('click',cmpClose); $('cmpBack').addEventListener('click',cmpClose);
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('cmpDoc').hidden) cmpClose(); });
+  $('cmpAddBtn').addEventListener('click',()=>{ if (!S.components.length){ const m=$('rpMsg'); if (m) m.textContent=tl('Önce tasarıma parça ekle.','Add parts to the design first.'); return; } cmpAdd(cmpCurrentName(), S); });
+  $('savedList').addEventListener('click',e=>{ const b=e.target.closest('[data-cmp]'); if(!b) return; const d=getDesigns()[+b.dataset.cmp]; if (d) cmpAdd(d.name, d.S); });
+  window.addEventListener('resize',()=>{ if (!$('cmpDoc').hidden) drawCmpChart(); });
+  cmpUpdate();
+}
+function cmpLang(){ cmpUpdate(); }
+</script>
+<script>
 /* HoverLab · flight.js
  * Uçuş dinamiği: gaz, eğim, sürükleme, batarya tüketimi; arıza senaryoları
  * (pervane kırılması, takla), otomatik güvenli iniş, eve dönüş, sinyal kaybı ve paraşüt.
- * Lisans: MIT */
+ * © 2026 HoverLab. Tüm hakları saklıdır. */
 'use strict';
 
 /* ================= flight sim ================= */
@@ -1986,7 +2938,7 @@ function maxHoldTiltDeg(){
 <script>
 /* HoverLab · scene3d.js
  * three.js ile 3B sahne, drone modeli, kamera, hafif mod ve 2B kuvvet şeması.
- * Lisans: MIT */
+ * © 2026 HoverLab. Tüm hakları saklıdır. */
 'use strict';
 
 /* ================= 3D scene ================= */
@@ -2424,7 +3376,7 @@ function drawSim(){
 <script>
 /* HoverLab · pid.js
  * PID ayar laboratuvarı: tek eksen simülasyonu, otomatik ayar, grafik ve ESP32 kod üretici.
- * Lisans: MIT */
+ * © 2026 HoverLab. Tüm hakları saklıdır. */
 'use strict';
 
 /* ================= PID lab ================= */
@@ -2787,7 +3739,7 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('pidDoc').hid
 <script>
 /* HoverLab · app.js
  * Uygulama döngüsü, kayıt, kayıtlı tasarımlar, olay bağlantıları ve başlatma.
- * Lisans: MIT */
+ * © 2026 HoverLab. Tüm hakları saklıdır. */
 'use strict';
 
 /* ================= HUD + loop ================= */
@@ -2812,7 +3764,8 @@ let show3D=true;
 function loop(ts){
   const dt=Math.min(0.05,(ts-(sim.last||ts))/1000); sim.last=ts;
   const sub=4, hh=dt*sim.speed/sub; for(let i=0;i<sub;i++) step(hh);
-  if (show3D&&V3.ok){ update3D(Math.max(dt,0.001)); perfSample(dt); } else drawSim();
+  if (typeof DZ!=='undefined' && DZ.busy){ /* akıllı tasarımcı çalışırken sahne bekler */ }
+  else if (show3D&&V3.ok){ update3D(Math.max(dt,0.001)); perfSample(dt); } else drawSim();
   updHud(); requestAnimationFrame(loop);
 }
 
@@ -2828,7 +3781,7 @@ function setDesigns(a){ try{ localStorage.setItem(DKEY,JSON.stringify(a)); retur
 function renderSaved(){
   const a=getDesigns(); $('savedBtn').textContent = tt(a.length?`Tasarımlarım (${a.length})`:'Tasarımlarım');
   $('savedList').innerHTML = a.length ? a.map((d,i)=>`<li><div style="min-width:0"><b>${esc(d.name)}</b><span>${esc(tt(`${fmt(d.mass)} g · itki/ağırlık ${fmt(d.tw,2)} · ${d.hover!=null?'hover %'+fmt(d.hover):'hover yok'}`))} · ${esc(d.date)}</span></div>
-      <button class="btn sm" data-load="${i}">${tt('Aç')}</button><button class="btn sm" data-del="${i}" aria-label="${esc(tt(d.name+' tasarımını sil'))}">${tt('Sil')}</button></li>`).join('')
+      <button class="btn sm" data-load="${i}">${tt('Aç')}</button><button class="btn sm" data-cmp="${i}" type="button">${tt('Karşılaştır')}</button><button class="btn sm" data-del="${i}" aria-label="${esc(tt(d.name+' tasarımını sil'))}">${tt('Sil')}</button></li>`).join('')
     : `<li class="empty">${esc(tt('Henüz kayıtlı tasarım yok. Yukarıya bir ad yazıp kaydet; farklı denemeleri burada karşılaştırırsın.'))}</li>`;
 }
 $('savedBtn').addEventListener('click',()=>{ const p=$('savedPanel'); p.hidden=!p.hidden; $('savedBtn').setAttribute('aria-expanded',!p.hidden); if(!p.hidden){ renderSaved(); $('saveName').focus(); } });
@@ -2923,8 +3876,8 @@ else { let pref=null; try{ pref=localStorage.getItem('itkilab-low'); }catch(e){}
 /* ---- paylaşım bağlantısı (#d-...) ---- */
 // Sitenin adresi (ör. https://kullanici.github.io/hoverlab/). Boş bırakılırsa sayfanın kendi adresi kullanılır.
 const SITE_URL = 'https://efekrtss.github.io/hoverlab/';
-// Kaynak kodu deposu; doldurulursa alt bilgide bağlantı görünür.
-const REPO_URL = 'https://github.com/efekrtss/hoverlab';
+// Depo gizli (private); alt bilgide kaynak bağlantısı gösterilmez.
+const REPO_URL = '';
 const IS_EMBED = (()=>{ try{ return window.top!==window.self; }catch(e){ return true; } })();
 function encodeState(){ const b=new TextEncoder().encode(JSON.stringify(S)); let bin=''; b.forEach(x=>bin+=String.fromCharCode(x)); return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
 function decodeState(t){ t=t.replace(/-/g,'+').replace(/_/g,'/'); while(t.length%4) t+='='; const bin=atob(t); return JSON.parse(new TextDecoder().decode(Uint8Array.from(bin,c=>c.charCodeAt(0)))); }
@@ -2934,7 +3887,7 @@ $('copyLink').addEventListener('click',()=>{
   try{ navigator.clipboard.writeText(url).then(()=>done('Bağlantı kopyalandı'),()=>{ $('importBox').hidden=false; $('cfgText').value=url; $('cfgText').select(); done('Bağlantıyı seçtim, kopyalayabilirsin'); }); }
   catch(e){ $('importBox').hidden=false; $('cfgText').value=url; $('cfgText').select(); }
 });
-if (REPO_URL){ const a=$('repoLink'); a.href=REPO_URL; a.hidden=false; }
+if (REPO_URL){ const a=$('repoLink'); if (a){ a.href=REPO_URL; a.hidden=false; } }
 
 /* ---- dil ---- */
 i18nStatic();   // sabit metinlerin Türkçe asıllarını dinamik içerik çizilmeden önce kaydeder
@@ -2943,6 +3896,8 @@ function setLang(l){
   ['addMsg','saveMsg','cfgMsg','cfgErr','pidCopyMsg'].forEach(id=>{ const e=$(id); if(e) e.textContent=''; });
   i18nStatic();
   renderPresets(); renderCats(); renderComp(); recompute(); renderSaved(); $('breakSel').dataset.key=''; scenUI();
+  if (typeof dzLang==='function') dzLang();
+  if (typeof cmpLang==='function') cmpLang();
   if (!$('results').hidden) openResults();
   if (typeof drawMinis==='function' && !$('pidDoc').hidden) drawMinis();
 }
@@ -2953,6 +3908,17 @@ if (location.hash.startsWith('#d-')){ try{ booted=applyState({...decodeState(loc
 if (!booted){ const saved=restore(); if (saved) applyState(saved); else loadPreset('fpv5'); }
 document.fonts && document.fonts.ready.then(()=>{ drawChart(); if(V3.ok) V3.sig=''; });
 requestAnimationFrame(loop);
+
+/* ================= erişilebilirlik: açık panelde odak tuzağı ================= */
+document.addEventListener('keydown',e=>{
+  if (e.key!=='Tab') return;
+  const d=[...document.querySelectorAll('.drawer.open')].find(x=>!x.hidden); if (!d) return;
+  const f=[...d.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])')].filter(x=>x.offsetParent!==null||x===document.activeElement);
+  if (!f.length) return; const first=f[0], last=f[f.length-1];
+  if (!d.contains(document.activeElement)){ e.preventDefault(); first.focus(); return; }
+  if (e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+});
 </script>
 </body>
 </html>

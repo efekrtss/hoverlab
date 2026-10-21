@@ -4,13 +4,17 @@
 
 **Canlı site:** https://efekrtss.github.io/hoverlab/
 
-HoverLab, tarayıcıda çalışan açık kaynak bir drone tasarım aracıdır. Bileşenleri seçersin; itki, akım, hover gazı ve uçuş süresi anında hesaplanır. Drone aynı fizikle 3B sahnede uçar. PID laboratuvarı tasarımına göre kazanç önerir ve ESP32 + MPU-6050 başlangıç kodu üretir.
+HoverLab, tarayıcıda çalışan bir drone tasarım aracıdır. Bileşenleri seçersin; itki, akım, hover gazı ve uçuş süresi anında hesaplanır. Drone aynı fizikle 3B sahnede uçar. PID laboratuvarı tasarımına göre kazanç önerir ve ESP32 + MPU-6050 başlangıç kodu üretir.
 
 Sunucu ya da veritabanı yoktur. Kök klasördeki `index.html` tek başına çalışan hazır sayfadır: çift tıklayıp açman yeterli.
 
 ## Özellikler
 
 - **Drone'unu oluştur:** yaklaşık 300 parçalık katalogda arama (motor, pervane, batarya, ESC/sürücü, kontrolcü, sensör, video, alıcı). Motor, pervane ya da batarya eklenince teknik değerler kendiliğinden dolar; ağırlıkları kendi ölçtüğün değerle değiştirebilirsin.
+- **Uygunluk ve uçuş riski:** yan panelde risk puanı, eksik parça listesi ve parça uyumu denetimleri (gövde–pervane, motor–batarya, ESC–motor tipi, batarya–ESC gerilimi, kanal sayısı, yığın ölçüsü, GPS…) ile uçuş öncesi kontrol listesi.
+- **Akıllı tasarımcı:** hedefini seç (boyut, kullanım, uçuş süresi, yük); katalogdan en uygun 3 drone'u fizik modeliyle kurar ve tek tıkla yükler.
+- **Karşılaştırma:** en fazla 3 tasarımı yan yana koy; en iyi değerler işaretlenir, itki eğrileri üst üste çizilir.
+- **Rapor:** tasarımı PDF rapor ya da CSV parça listesi olarak indir; okul ve yarışma raporlarına doğrudan eklenir.
 - **Hesaplar:** itki/ağırlık oranı, hover gazı, hover uçuş süresi, gaz–itki–akım eğrisi, ESC ve batarya yük kontrolleri, gerilim düşümü, pervane ucu hızı.
 - **3B uçuş sahnesi:** gaz ve eğim kontrolü, takip ve gözlemci kamerası, itki okları, zayıf cihazlar için hafif mod. Model listendeki parçalara göre değişir (kamera, GPS, anten, batarya boyu).
 - **Arıza ve güvenlik senaryoları:** pervane kırma, güvenli iniş, eve dönüş, sinyal kaybı (yerinde in / eve dön / motorları kapat), düşük bataryada otomatik iniş ve paraşüt. Sonuç drone tipine göre değişir: kuad tek pervane kaybında düşer, heksa 1, okta 2 kaybı tolere eder.
@@ -87,10 +91,10 @@ Katkılar memnuniyetle karşılanır. En kolay başlangıç kataloğa doğrulanm
 
 ## Lisans
 
-[MIT](LICENSE). three.js kendi MIT lisansıyla `vendor/` altında dağıtılır.
+Tüm hakları saklıdır; ayrıntı için [LICENSE](LICENSE). Bu depo gizlidir (private). three.js kendi MIT lisansıyla `vendor/` altında kullanılır.
 
 ---
 
 ### English summary
 
-HoverLab is an open-source, in-browser drone design tool: pick components from a searchable catalog, get thrust-to-weight, hover throttle, current and flight time instantly, fly the build in a 3D scene, and tune a single-axis PID loop that generates ESP32 + MPU-6050 starter code. No server or build step; open `index.html`. The interface is available in Turkish and English (toggle at the top right); more translations are welcome.
+HoverLab is an in-browser drone design tool: pick components from a searchable catalog, get thrust-to-weight, hover throttle, current and flight time instantly, fly the build in a 3D scene, and tune a single-axis PID loop that generates ESP32 + MPU-6050 starter code. No server or build step; open `index.html`. The interface is available in Turkish and English (toggle at the top right); more translations are welcome.
